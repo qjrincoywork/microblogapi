@@ -1,0 +1,444 @@
+2020-04-17 03:20:29 Error: [Cake\Database\Exception] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'microblog3.users' doesn't exist in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 132
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(98): Cake\Database\Schema\Collection->_reflect('Column', 'users', Array, Object(Cake\Database\Schema\TableSchema))
+#1 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php(62): Cake\Database\Schema\Collection->describe('users', Array)
+#2 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(559): Cake\Database\Schema\CachedCollection->describe('users')
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(684): Cake\ORM\Table->getSchema()
+#4 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\TemplateTask.php(288): Cake\ORM\Table->getPrimaryKey()
+#5 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\TemplateTask.php(142): Bake\Shell\Task\TemplateTask->_loadController()
+#6 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Bake\Shell\Task\TemplateTask->main('Users')
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(524): Cake\Console\Shell->runCommand(Array, false, Array)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#10 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#11 {main}
+
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'microblog3.users' doesn't exist in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Statement\MysqlStatement.php on line 38
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Statement\MysqlStatement.php(38): PDOStatement->execute(NULL)
+#1 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(349): Cake\Database\Statement\MysqlStatement->execute()
+#2 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(67): Cake\Database\Connection->Cake\Database\{closure}()
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(352): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#4 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(301): Cake\Database\Connection->query('SHOW FULL COLUM...')
+#5 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(67): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(305): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(130): Cake\Database\Connection->execute('SHOW FULL COLUM...', Array)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(98): Cake\Database\Schema\Collection->_reflect('Column', 'users', Array, Object(Cake\Database\Schema\TableSchema))
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php(62): Cake\Database\Schema\Collection->describe('users', Array)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(559): Cake\Database\Schema\CachedCollection->describe('users')
+#11 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(684): Cake\ORM\Table->getSchema()
+#12 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\TemplateTask.php(288): Cake\ORM\Table->getPrimaryKey()
+#13 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\TemplateTask.php(142): Bake\Shell\Task\TemplateTask->_loadController()
+#14 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Bake\Shell\Task\TemplateTask->main('Users')
+#15 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(524): Cake\Console\Shell->runCommand(Array, false, Array)
+#16 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#17 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#18 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#19 {main}
+
+
+2020-04-17 04:02:52 Error: [Symfony\Component\Console\Exception\CommandNotFoundException] Command "alter" is not defined. in C:\wamp64\www\microblog3\vendor\symfony\console\Application.php on line 644
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(228): Symfony\Component\Console\Application->find('alter')
+#1 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#2 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'alter', 'Users')
+#4 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#5 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#6 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#7 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#8 {main}
+
+
+2020-04-17 05:03:03 Error: [Symfony\Component\Console\Exception\RuntimeException] Too many arguments, expected arguments "command". in C:\wamp64\www\microblog3\vendor\symfony\console\Input\ArgvInput.php on line 171
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\symfony\console\Input\ArgvInput.php(82): Symfony\Component\Console\Input\ArgvInput->parseArgument('Users')
+#1 C:\wamp64\www\microblog3\vendor\symfony\console\Input\Input.php(55): Symfony\Component\Console\Input\ArgvInput->parse()
+#2 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(214): Symfony\Component\Console\Input\Input->bind(Object(Symfony\Component\Console\Input\InputDefinition))
+#3 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#4 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Rollback), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#5 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#6 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'rollback', 'Users')
+#8 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#11 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#12 {main}
+
+
+2020-04-17 05:13:45 Error: [RuntimeException] Unknown command `cake migrate`. Run `cake --help` to get the list of valid commands. in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php on line 347
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(157): Cake\Console\CommandRunner->resolveName(Object(Cake\Console\CommandCollection), Object(Cake\Console\ConsoleIo), 'migrate')
+#1 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#2 {main}
+
+
+2020-04-17 05:39:11 Error: [Symfony\Component\Console\Exception\RuntimeException] Too many arguments, expected arguments "command". in C:\wamp64\www\microblog3\vendor\symfony\console\Input\ArgvInput.php on line 171
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\symfony\console\Input\ArgvInput.php(82): Symfony\Component\Console\Input\ArgvInput->parseArgument('Users')
+#1 C:\wamp64\www\microblog3\vendor\symfony\console\Input\Input.php(55): Symfony\Component\Console\Input\ArgvInput->parse()
+#2 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(214): Symfony\Component\Console\Input\Input->bind(Object(Symfony\Component\Console\Input\InputDefinition))
+#3 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#4 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Migrate), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#5 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#6 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'migrate', 'Users')
+#8 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#11 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#12 {main}
+
+
+2020-04-17 06:01:39 Error: [Symfony\Component\Console\Exception\RuntimeException] The "--only" option does not exist. in C:\wamp64\www\microblog3\vendor\symfony\console\Input\ArgvInput.php on line 200
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\symfony\console\Input\ArgvInput.php(144): Symfony\Component\Console\Input\ArgvInput->addLongOption('only', NULL)
+#1 C:\wamp64\www\microblog3\vendor\symfony\console\Input\ArgvInput.php(78): Symfony\Component\Console\Input\ArgvInput->parseLongOption('--only')
+#2 C:\wamp64\www\microblog3\vendor\symfony\console\Input\Input.php(55): Symfony\Component\Console\Input\ArgvInput->parse()
+#3 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(214): Symfony\Component\Console\Input\Input->bind(Object(Symfony\Component\Console\Input\InputDefinition))
+#4 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#5 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Rollback), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#6 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'rollback')
+#9 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#11 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#12 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#13 {main}
+
+
+2020-04-17 06:02:14 Error: [RuntimeException] Unknown command `cake migration`. Run `cake --help` to get the list of valid commands. in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php on line 347
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(157): Cake\Console\CommandRunner->resolveName(Object(Cake\Console\CommandCollection), Object(Cake\Console\ConsoleIo), 'migration')
+#1 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#2 {main}
+
+
+2020-04-17 06:05:39 Error: [Phinx\Migration\IrreversibleMigrationException] Cannot reverse a "Phinx\Db\Action\ChangeColumn" command in C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\ProxyAdapter.php on line 108
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\ProxyAdapter.php(125): Phinx\Db\Adapter\ProxyAdapter->getInvertedCommands()
+#1 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager\Environment.php(101): Phinx\Db\Adapter\ProxyAdapter->executeInvertedCommands()
+#2 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(374): Phinx\Migration\Manager\Environment->executeMigration(Object(Users), 'down', false)
+#3 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(519): Phinx\Migration\Manager->executeMigration('default', Object(Users), 'down', false)
+#4 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Console\Command\Rollback.php(124): Phinx\Migration\Manager->rollback('default', 0, false, true, false)
+#5 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\CommandTrait.php(35): Phinx\Console\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#6 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\Rollback.php(67): Migrations\Command\Rollback->parentExecute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#7 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(255): Migrations\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Rollback), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'rollback')
+#13 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#14 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#15 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#16 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#17 {main}
+
+
+2020-04-17 06:10:45 Error: [RuntimeException] "datatype" is not a valid column option. in C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Table\Column.php on line 752
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Action\ChangeColumn.php(64): Phinx\Db\Table\Column->setOptions(Array)
+#1 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Table.php(362): Phinx\Db\Action\ChangeColumn::build(Object(Phinx\Db\Table\Table), 'id', 'biginteger', Array)
+#2 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Table.php(68): Phinx\Db\Table->changeColumn('id', 'biginteger', Array)
+#3 C:\wamp64\www\microblog3\config\Migrations\20200417033222_Users.php(16): Migrations\Table->changeColumn('id', 'biginteger', Array)
+#4 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager\Environment.php(100): Users->change()
+#5 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(374): Phinx\Migration\Manager\Environment->executeMigration(Object(Users), 'down', false)
+#6 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(519): Phinx\Migration\Manager->executeMigration('default', Object(Users), 'down', false)
+#7 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Console\Command\Rollback.php(124): Phinx\Migration\Manager->rollback('default', 0, false, true, false)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\CommandTrait.php(35): Phinx\Console\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\Rollback.php(67): Migrations\Command\Rollback->parentExecute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(255): Migrations\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Rollback), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#13 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#14 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#15 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'rollback')
+#16 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#17 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#18 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#19 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#20 {main}
+
+
+2020-04-17 06:11:06 Error: [RuntimeException] "dataType" is not a valid column option. in C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Table\Column.php on line 752
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Action\ChangeColumn.php(64): Phinx\Db\Table\Column->setOptions(Array)
+#1 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Table.php(362): Phinx\Db\Action\ChangeColumn::build(Object(Phinx\Db\Table\Table), 'id', 'biginteger', Array)
+#2 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Table.php(68): Phinx\Db\Table->changeColumn('id', 'biginteger', Array)
+#3 C:\wamp64\www\microblog3\config\Migrations\20200417033222_Users.php(16): Migrations\Table->changeColumn('id', 'biginteger', Array)
+#4 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager\Environment.php(100): Users->change()
+#5 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(374): Phinx\Migration\Manager\Environment->executeMigration(Object(Users), 'down', false)
+#6 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(519): Phinx\Migration\Manager->executeMigration('default', Object(Users), 'down', false)
+#7 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Console\Command\Rollback.php(124): Phinx\Migration\Manager->rollback('default', 0, false, true, false)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\CommandTrait.php(35): Phinx\Console\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\Rollback.php(67): Migrations\Command\Rollback->parentExecute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(255): Migrations\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Rollback), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#13 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#14 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#15 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'rollback')
+#16 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#17 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#18 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#19 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#20 {main}
+
+
+2020-04-17 06:16:00 Error: [Cake\Database\Exception] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'microblog3.users' doesn't exist in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 132
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(98): Cake\Database\Schema\Collection->_reflect('Column', 'users', Array, Object(Cake\Database\Schema\TableSchema))
+#1 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php(62): Cake\Database\Schema\Collection->describe('users', Array)
+#2 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(559): Cake\Database\Schema\CachedCollection->describe('users')
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(684): Cake\ORM\Table->getSchema()
+#4 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\TemplateTask.php(288): Cake\ORM\Table->getPrimaryKey()
+#5 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\TemplateTask.php(142): Bake\Shell\Task\TemplateTask->_loadController()
+#6 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Bake\Shell\Task\TemplateTask->main('Users')
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(524): Cake\Console\Shell->runCommand(Array, false, Array)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#10 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#11 {main}
+
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'microblog3.users' doesn't exist in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Statement\MysqlStatement.php on line 38
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Statement\MysqlStatement.php(38): PDOStatement->execute(NULL)
+#1 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(349): Cake\Database\Statement\MysqlStatement->execute()
+#2 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(67): Cake\Database\Connection->Cake\Database\{closure}()
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(352): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#4 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(301): Cake\Database\Connection->query('SHOW FULL COLUM...')
+#5 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(67): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(305): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(130): Cake\Database\Connection->execute('SHOW FULL COLUM...', Array)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(98): Cake\Database\Schema\Collection->_reflect('Column', 'users', Array, Object(Cake\Database\Schema\TableSchema))
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php(62): Cake\Database\Schema\Collection->describe('users', Array)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(559): Cake\Database\Schema\CachedCollection->describe('users')
+#11 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(684): Cake\ORM\Table->getSchema()
+#12 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\TemplateTask.php(288): Cake\ORM\Table->getPrimaryKey()
+#13 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\TemplateTask.php(142): Bake\Shell\Task\TemplateTask->_loadController()
+#14 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Bake\Shell\Task\TemplateTask->main('Users')
+#15 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(524): Cake\Console\Shell->runCommand(Array, false, Array)
+#16 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#17 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#18 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#19 {main}
+
+
+2020-04-20 11:03:56 Error: [RuntimeException] Unknown command `cake migration`. Run `cake --help` to get the list of valid commands. in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php on line 347
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(157): Cake\Console\CommandRunner->resolveName(Object(Cake\Console\CommandCollection), Object(Cake\Console\ConsoleIo), 'migration')
+#1 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#2 {main}
+
+
+2020-04-20 11:05:21 Error: [RuntimeException] Unknown command `cake migration`. Run `cake --help` to get the list of valid commands. in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php on line 347
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(157): Cake\Console\CommandRunner->resolveName(Object(Cake\Console\CommandCollection), Object(Cake\Console\ConsoleIo), 'migration')
+#1 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#2 {main}
+
+
+2020-04-20 11:29:24 Error: [RuntimeException] Unknown command `cake migrationss`. Run `cake --help` to get the list of valid commands. in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php on line 347
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(157): Cake\Console\CommandRunner->resolveName(Object(Cake\Console\CommandCollection), Object(Cake\Console\ConsoleIo), 'migrationss')
+#1 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#2 {main}
+
+
+2020-04-20 11:29:40 Error: [Symfony\Component\Console\Exception\RuntimeException] Not enough arguments (missing: "name"). in C:\wamp64\www\microblog3\vendor\symfony\console\Input\Input.php on line 76
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(250): Symfony\Component\Console\Input\Input->validate()
+#1 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#2 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Create), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#3 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#4 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#5 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'create')
+#6 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#9 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#10 {main}
+
+
+2020-04-20 11:35:43 Error: [Cake\Database\Exception] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'microblog3.user_profiles' doesn't exist in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 132
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(98): Cake\Database\Schema\Collection->_reflect('Column', 'user_profiles', Array, Object(Cake\Database\Schema\TableSchema))
+#1 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php(62): Cake\Database\Schema\Collection->describe('user_profiles', Array)
+#2 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(559): Cake\Database\Schema\CachedCollection->describe('user_profiles')
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(684): Cake\ORM\Table->getSchema()
+#4 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(221): Cake\ORM\Table->getPrimaryKey()
+#5 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(131): Bake\Shell\Task\ModelTask->getAssociations(Object(Cake\ORM\Table))
+#6 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(114): Bake\Shell\Task\ModelTask->getTableContext(Object(Cake\ORM\Table), 'user_profiles', 'UserProfiles')
+#7 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(101): Bake\Shell\Task\ModelTask->bake('UserProfiles')
+#8 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\BakeShell.php(282): Bake\Shell\Task\ModelTask->main('UserProfiles')
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Collection\CollectionTrait.php(64): Bake\Shell\BakeShell->Bake\Shell\{closure}('UserProfiles', 0)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\BakeShell.php(283): Cake\Collection\Collection->each(Object(Closure))
+#11 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(517): Bake\Shell\BakeShell->all('UserProfiles')
+#12 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#13 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#14 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#15 {main}
+
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'microblog3.user_profiles' doesn't exist in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Statement\MysqlStatement.php on line 38
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Statement\MysqlStatement.php(38): PDOStatement->execute(NULL)
+#1 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(349): Cake\Database\Statement\MysqlStatement->execute()
+#2 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(67): Cake\Database\Connection->Cake\Database\{closure}()
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(352): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#4 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(301): Cake\Database\Connection->query('SHOW FULL COLUM...')
+#5 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(67): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(305): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(130): Cake\Database\Connection->execute('SHOW FULL COLUM...', Array)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(98): Cake\Database\Schema\Collection->_reflect('Column', 'user_profiles', Array, Object(Cake\Database\Schema\TableSchema))
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php(62): Cake\Database\Schema\Collection->describe('user_profiles', Array)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(559): Cake\Database\Schema\CachedCollection->describe('user_profiles')
+#11 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(684): Cake\ORM\Table->getSchema()
+#12 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(221): Cake\ORM\Table->getPrimaryKey()
+#13 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(131): Bake\Shell\Task\ModelTask->getAssociations(Object(Cake\ORM\Table))
+#14 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(114): Bake\Shell\Task\ModelTask->getTableContext(Object(Cake\ORM\Table), 'user_profiles', 'UserProfiles')
+#15 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(101): Bake\Shell\Task\ModelTask->bake('UserProfiles')
+#16 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\BakeShell.php(282): Bake\Shell\Task\ModelTask->main('UserProfiles')
+#17 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Collection\CollectionTrait.php(64): Bake\Shell\BakeShell->Bake\Shell\{closure}('UserProfiles', 0)
+#18 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\BakeShell.php(283): Cake\Collection\Collection->each(Object(Closure))
+#19 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(517): Bake\Shell\BakeShell->all('UserProfiles')
+#20 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#21 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#22 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#23 {main}
+
+
+2020-04-21 08:13:49 Error: [Cake\Database\Exception] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'microblog3.posts' doesn't exist in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 132
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(98): Cake\Database\Schema\Collection->_reflect('Column', 'posts', Array, Object(Cake\Database\Schema\TableSchema))
+#1 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php(62): Cake\Database\Schema\Collection->describe('posts', Array)
+#2 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(559): Cake\Database\Schema\CachedCollection->describe('posts')
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(684): Cake\ORM\Table->getSchema()
+#4 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(221): Cake\ORM\Table->getPrimaryKey()
+#5 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(131): Bake\Shell\Task\ModelTask->getAssociations(Object(Cake\ORM\Table))
+#6 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(114): Bake\Shell\Task\ModelTask->getTableContext(Object(Cake\ORM\Table), 'posts', 'Posts')
+#7 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(101): Bake\Shell\Task\ModelTask->bake('Posts')
+#8 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\BakeShell.php(282): Bake\Shell\Task\ModelTask->main('Posts')
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Collection\CollectionTrait.php(64): Bake\Shell\BakeShell->Bake\Shell\{closure}('Posts', 0)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\BakeShell.php(283): Cake\Collection\Collection->each(Object(Closure))
+#11 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(517): Bake\Shell\BakeShell->all('Posts')
+#12 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#13 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#14 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#15 {main}
+
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'microblog3.posts' doesn't exist in C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Statement\MysqlStatement.php on line 38
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Statement\MysqlStatement.php(38): PDOStatement->execute(NULL)
+#1 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(349): Cake\Database\Statement\MysqlStatement->execute()
+#2 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(67): Cake\Database\Connection->Cake\Database\{closure}()
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(352): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#4 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(301): Cake\Database\Connection->query('SHOW FULL COLUM...')
+#5 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(67): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Connection.php(305): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(130): Cake\Database\Connection->execute('SHOW FULL COLUM...', Array)
+#8 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\Collection.php(98): Cake\Database\Schema\Collection->_reflect('Column', 'posts', Array, Object(Cake\Database\Schema\TableSchema))
+#9 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php(62): Cake\Database\Schema\Collection->describe('posts', Array)
+#10 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(559): Cake\Database\Schema\CachedCollection->describe('posts')
+#11 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\ORM\Table.php(684): Cake\ORM\Table->getSchema()
+#12 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(221): Cake\ORM\Table->getPrimaryKey()
+#13 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(131): Bake\Shell\Task\ModelTask->getAssociations(Object(Cake\ORM\Table))
+#14 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(114): Bake\Shell\Task\ModelTask->getTableContext(Object(Cake\ORM\Table), 'posts', 'Posts')
+#15 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\Task\ModelTask.php(101): Bake\Shell\Task\ModelTask->bake('Posts')
+#16 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\BakeShell.php(282): Bake\Shell\Task\ModelTask->main('Posts')
+#17 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Collection\CollectionTrait.php(64): Bake\Shell\BakeShell->Bake\Shell\{closure}('Posts', 0)
+#18 C:\wamp64\www\microblog3\vendor\cakephp\bake\src\Shell\BakeShell.php(283): Cake\Collection\Collection->each(Object(Closure))
+#19 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(517): Bake\Shell\BakeShell->all('Posts')
+#20 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#21 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#22 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#23 {main}
+
+
+2020-04-21 08:24:41 Error: [InvalidArgumentException] An invalid column type "tiny_text" was specified for column "content". in C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Table.php on line 305
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Table.php(54): Phinx\Db\Table->addColumn('content', 'tiny_text', Array)
+#1 C:\wamp64\www\microblog3\config\Migrations\20200421080537_Posts.php(17): Migrations\Table->addColumn('content', 'tiny_text', Array)
+#2 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager\Environment.php(100): Posts->change()
+#3 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(374): Phinx\Migration\Manager\Environment->executeMigration(Object(Posts), 'down', false)
+#4 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(519): Phinx\Migration\Manager->executeMigration('default', Object(Posts), 'down', false)
+#5 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Console\Command\Rollback.php(124): Phinx\Migration\Manager->rollback('default', 20200417033222, false, true, false)
+#6 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\CommandTrait.php(35): Phinx\Console\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\Rollback.php(67): Migrations\Command\Rollback->parentExecute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(255): Migrations\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Rollback), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#13 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'rollback')
+#14 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#15 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#16 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#17 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#18 {main}
+
+
+2020-04-21 08:24:48 Error: [InvalidArgumentException] An invalid column type "tiny_text" was specified for column "content". in C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Table.php on line 305
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Table.php(54): Phinx\Db\Table->addColumn('content', 'tiny_text', Array)
+#1 C:\wamp64\www\microblog3\config\Migrations\20200421080537_Posts.php(17): Migrations\Table->addColumn('content', 'tiny_text', Array)
+#2 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager\Environment.php(100): Posts->change()
+#3 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(374): Phinx\Migration\Manager\Environment->executeMigration(Object(Posts), 'down', false)
+#4 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(519): Phinx\Migration\Manager->executeMigration('default', Object(Posts), 'down', false)
+#5 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Console\Command\Rollback.php(124): Phinx\Migration\Manager->rollback('default', 20200417033222, false, true, false)
+#6 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\CommandTrait.php(35): Phinx\Console\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#7 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\Rollback.php(67): Migrations\Command\Rollback->parentExecute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(255): Migrations\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Rollback), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#13 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'rollback')
+#14 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#15 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#16 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#17 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#18 {main}
+
+
+2020-04-29 16:55:33 Error: [Symfony\Component\Console\Exception\CommandNotFoundException] Command "bake" is not defined. in C:\wamp64\www\microblog3\vendor\symfony\console\Application.php on line 644
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(228): Symfony\Component\Console\Application->find('bake')
+#1 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#2 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#3 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'bake')
+#4 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#5 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#6 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#7 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#8 {main}
+
+
+2020-04-29 16:58:06 Error: [Phinx\Migration\IrreversibleMigrationException] Cannot reverse a "Phinx\Db\Action\ChangeColumn" command in C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\ProxyAdapter.php on line 108
+Stack Trace:
+#0 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\ProxyAdapter.php(125): Phinx\Db\Adapter\ProxyAdapter->getInvertedCommands()
+#1 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager\Environment.php(101): Phinx\Db\Adapter\ProxyAdapter->executeInvertedCommands()
+#2 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(374): Phinx\Migration\Manager\Environment->executeMigration(Object(Users), 'down', false)
+#3 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(519): Phinx\Migration\Manager->executeMigration('default', Object(Users), 'down', false)
+#4 C:\wamp64\www\microblog3\vendor\robmorgan\phinx\src\Phinx\Console\Command\Rollback.php(124): Phinx\Migration\Manager->rollback('default', 0, false, true, false)
+#5 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\CommandTrait.php(35): Phinx\Console\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#6 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Command\Rollback.php(67): Migrations\Command\Rollback->parentExecute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#7 C:\wamp64\www\microblog3\vendor\symfony\console\Command\Command.php(255): Migrations\Command\Rollback->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(912): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(264): Symfony\Component\Console\Application->doRunCommand(Object(Migrations\Command\Rollback), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 C:\wamp64\www\microblog3\vendor\symfony\console\Application.php(140): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(108): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\Shell.php(531): Migrations\Shell\MigrationsShell->main('migrations', 'rollback')
+#13 C:\wamp64\www\microblog3\vendor\cakephp\migrations\src\Shell\MigrationsShell.php(169): Cake\Console\Shell->runCommand(Array, true, Array)
+#14 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Migrations\Shell\MigrationsShell->runCommand(Array, true)
+#15 C:\wamp64\www\microblog3\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Migrations\Shell\MigrationsShell), Array)
+#16 C:\wamp64\www\microblog3\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#17 {main}
+
+
