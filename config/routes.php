@@ -116,6 +116,7 @@ Router::scope('/', function (RouteBuilder $routes) {
 });
 Router::prefix('/api', function (RouteBuilder $routes) {
     $routes->setExtensions(['json']);
-    // $routes->resources('Users');
+    $routes->resources('Users');
+    Router::connect('/api/users/login', ['controller' => 'Users', 'action' => 'login', 'prefix' => 'api']);
     $routes->fallbacks(DashedRoute::class);
 });

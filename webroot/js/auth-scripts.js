@@ -71,8 +71,8 @@ $(function () {
             });
             
             if(className == 'login_user') {
-                // action = '/admin/apis/login.json'
-                action = '/users/login'
+                action = '/api/users/login.json'
+                // action = '/users/login'
             }
 
             posting = $.ajax({
