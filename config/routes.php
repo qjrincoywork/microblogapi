@@ -46,11 +46,6 @@ use Cake\Routing\Route\DashedRoute;
 Router::defaultRouteClass(DashedRoute::class);
 
 Router::scope('/', function (RouteBuilder $routes) {
-    Router::prefix('/api', function (RouteBuilder $routes) {
-        $routes->setExtensions(['json']);
-        // $routes->resources('Apis');
-        $routes->fallbacks(DashedRoute::class);
-    });
     // Register scoped middleware for in scopes.
     /* $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
         'httpOnly' => true
@@ -122,6 +117,11 @@ Router::scope('/', function (RouteBuilder $routes) {
      * You can remove these routes once you've connected the
      * routes you want in your application.
      */
+    $routes->fallbacks(DashedRoute::class);
+});
+Router::prefix('/api', function (RouteBuilder $routes) {
+    $routes->setExtensions(['json']);
+    // $routes->resources('Users');
     $routes->fallbacks(DashedRoute::class);
 });
 

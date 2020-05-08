@@ -43,51 +43,6 @@ class AppController extends Controller
         $this->loadComponent('RequestHandler', [
             'enableBeforeRedirect' => false,
         ]);
-        $this->loadComponent('Flash');
-        // $this->loadComponent('Session');
-        $this->loadComponent('Paginator');
-        $this->loadComponent('Auth', [
-            // 'loginAction' => ['controller' => 'index', 'action' => 'index'],
-            // 'logoutRedirect' => ['controller' => 'index', 'action' => 'register'],
-            'loginAction' => ['controller' => 'users', 'action' => 'login'],
-            'logoutRedirect' => ['controller' => 'users', 'action' => 'register'],
-            'authenticate' => [
-                'Form' => [
-                    'fields' => [
-                        'username' => 'username',
-                        'password' => 'password'
-                    ]
-                ]
-            ],
-            'storage' => 'Session',
-            'unauthorizedRedirect' => false
-        ]);
-        // $this->loadComponent('Csrf');
-        /*
-         * Enable the following component for recommended CakePHP security settings.
-         * see https://book.cakephp.org/3.0/en/controllers/components/security.html
-         */
-        // $this->loadComponent('Security');
-    }
-
-    public function beforeFilter(Event $event) {
-        $this->Auth->allow(['login', 'register', 'activation', 'logout', 'testEmail']);
-    }
-
-    public function beforeRender(Event $event) {
-        $auth = $this->request->getSession()->read('Auth.User');
-        $myId = $this->request->getSession()->read('Auth.User.id');
-        $systemLogo = "/img/microbloglogo.png";
-        
-        $this->set(compact('auth', 'myId', 'systemLogo'));
-    }
-
-    public function formErrors($data) {
-        $errors = [];
-        foreach($data->getErrors() as $key => $val) {
-            $errors[$key] = array_values($val);
-        }
-        return $errors;
     }
 
     public function jsonResponse($data){
