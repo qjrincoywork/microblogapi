@@ -60,11 +60,6 @@ Router::scope('/', function (RouteBuilder $routes) {
         ['controller' => 'Index', 'action' => 'index'],
         'index:index'
     );
-    $routes->get(
-        '/register',
-        ['controller' => 'Index', 'action' => 'register'],
-        'index:register'
-    );
     // $routes->connect('/', ['controller' => 'Users', 'action' => 'register', 'register']);
     // $routes->scope('/users', function ($routes) {
     //     $routes->applyMiddleware('csrf');
@@ -124,15 +119,3 @@ Router::prefix('/api', function (RouteBuilder $routes) {
     // $routes->resources('Users');
     $routes->fallbacks(DashedRoute::class);
 });
-
-/**
- * If you need a different set of middleware or none at all,
- * open new scope and define routes there.
- *
- * ```
- * Router::scope('/api', function (RouteBuilder $routes) {
- *     // No $routes->applyMiddleware() here.
- *     // Connect API actions here.
- * });
- * ```
- */
