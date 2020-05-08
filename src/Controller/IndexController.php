@@ -8,19 +8,18 @@ use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
 use Cake\ORM\TableRegistry;
 /**
- * Users Controller
+ * Index Controller
  *
  *
  * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class UsersController extends AppController
+class IndexController extends AppController
 {
     public function initialize()
     {
         parent::initialize();
         $this->loadModel('Posts');
         $this->loadModel('Follows');
-        $this->loadComponent('RequestHandler');
     }
 
     public function beforeFilter(Event $event)
@@ -31,12 +30,6 @@ class UsersController extends AppController
         if($this->request->is('ajax')) {
             $this->viewBuilder()->setLayout(false);
         }
-    }
-
-    public function index()
-    {
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
-        $this->set(['data' => $data, '_serialize' => ['data']]);
     }
 
     public function getPosts($conditions) {
@@ -78,7 +71,7 @@ class UsersController extends AppController
 
     public function home()
     {
-        /* $id = $this->request->getSession()->read('Auth.User.id');
+        $id = $this->request->getSession()->read('Auth.User.id');
         $following = $this->Follows->find()
                                    ->select('Follows.following_id')
                                    ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
@@ -89,39 +82,50 @@ class UsersController extends AppController
         }
         $ids[] = $id;
         
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]); */
+        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
         $post = $this->Posts->newEntity();
-        $this->set(['post' => $post]);
-        // $this->set(['post' => $post, 'data' => $data, 
-        //             '_serialize' => ['data']]);
+        $this->set(['post' => $post, 'data' => $data, 
+                    '_serialize' => ['data']]);
+    }
+
+    public function index()
+    {
+        $this->set('title', 'User Login');
+        $this->viewBuilder()->setLayout('default');
     }
 
     public function login()
     {
-        $this->set('title', 'User Login');
-        if($this->request->getSession()->read('Auth.User.id')) {
+        /* $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
+        $this->set(['data' => $data, 
+                    '_serialize' => ['data']]);
+        die('index login'); */
+            pr($datum);
+            die('hits');
+        /* if($this->request->getSession()->read('Auth.User.id')) {
             return $this->redirect(['action' => 'home']);
         }
         
         $this->viewBuilder()->setLayout('default');
         if($this->request->is('post')) {
             $user = $this->Auth->identify();
+            
             if($user) {
                 if($user['is_online'] == 2) {
-                    $datum['error'] = 'Please activate your account first.';
+                    $this->Flash->error(__('Please activate your account first.'));
                 } else {
                     $userData = $this->Users->get($user['id']);
                     $userData->set(['is_online' => 1]);
+                    
                     if($this->Users->save($userData)) {
                         $this->Auth->setUser($user);
-                        $datum['success'] = true;
+                        return $this->redirect($this->Auth->redirectUrl("/users/home"));
                     }
                 }
             } else {
-                $datum['error'] = 'Invalid username or password.';
+                $this->Flash->error(__('Invalid username or password.'));
             }
-            return $this->jsonResponse($datum);
-        }
+        } */
     }
     
     public function sendEmail($userName, $fullName, $to, $token) {
@@ -160,26 +164,7 @@ class UsersController extends AppController
         
         $this->viewBuilder()->setLayout('default');
         $user = $this->Users->newEntity();
-        if ($this->request->is('post')) {
-            $datum['success'] = false;
-            $postData = $this->request->getData();
-            $mytoken = Security::hash(Security::randomBytes(32));
-            $postData['token'] = $mytoken;
-            $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Register']);
-            
-            if(!$user->getErrors()) {
-                if ($this->Users->save($user)) {
-                    $fullName = $user->last_name.', '.$user->first_name.' '.$user->middle_name;
-                    $userName = $user->username;
-                    $to = $user->email;
-                    if($this->sendEmail($userName, $fullName, $to, $mytoken)) {
-                        $this->Flash->success(__('Email has been sent to activate your account.'));
-                        return $this->redirect(['action' => 'register']);
-                    }
-                }
-            }
-        }
-        $this->set('user', $user);
+        // $this->set('user', $user);
     }
 
     public function activation($token) {

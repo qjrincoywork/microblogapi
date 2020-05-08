@@ -37,6 +37,79 @@ var fxUser = {
 };
 
 $(function () {
+    var csrfToken = $('meta[name="csrf-token"]').attr('content'),
+        form = $(this).closest("form").not(".form-group"),
+        fd = new FormData();
+    switch (window.location.pathname) {
+        case '/users/home':
+            var url = '/admin/apis/home.json';
+            posting = $.ajax({
+                type: "get",
+                url: url,
+                data: fd,
+                headers: {
+                    "X-CSRF-Token": csrfToken
+                },
+                cache: false,
+                processData: false,
+                contentType: false
+            });
+            posting.done(function (data) {
+                var postContainer = '';
+                if(data) {
+                    $.each(data.data, function(index, post) {
+                        console.log(post);
+                        
+                        postContainer += "<div class='post-container border'>";
+                        postContainer += "   <div class='row'><div class='post-img col-sm-2'>";
+                        postContainer +=     "<img src='"+post.user.profile_image+"'>";
+                        postContainer += "   </div>";
+                        
+                        postContainer += "<div class='post-details col-sm-10'><div class='row'>";
+                        postContainer +=      "<div class='post-user'><a href='/users/profile/"+post.user_id+"'>"
+                                                + post.user.full_name +
+                                               "</a></div>"+
+                                               "<div class='post-ago'>"
+                                                + post.post_ago +
+                                               "</div>"+
+                                               "<div class='post-content col-sm-12'><p>"
+                                                + post.content +
+                                               "<p></div>";
+                                        if(post.image) {
+                                        postContainer +=  "<div class='post-image col-sm-12 mb-2'>"+
+                                                "<img src='/"+ post.image+ "'>"+
+                                            "</div>";
+                                        }
+                        postContainer += "</div></div></div>";
+                        
+                        var buttons = "<div class='post-buttons border-top'>" +
+                                        "<div class='row'>" +
+                                            "<button href='/comments/add/"+ post.id +"' class='comment_post col-sm-3'>" +
+                                                "<span class='far fa-comment' data-toggle='tooltip' data-placement='top' title='Comment'> </span>" +
+                                            "</button>" +
+                                            "<button href='/likes/add/"+ post.id +"' class='like_post col-sm-3'>" +
+                                                "<span class='far fa-heart' data-toggle='tooltip' data-placement='top' title='Like'> </span>" +
+                                            "</button>" +
+                                            "<button href='/posts/share/"+ post.id +"' class='share_post col-sm-3'>" +
+                                                "<span class='far fa-share-square' data-toggle='tooltip' data-placement='top' title='Share'> </span>" +
+                                            "</button>" +
+                                            "<a href='/posts/view/"+ post.id +"' class='col-sm-3'>" +
+                                                "<span class='fa fa-eye' data-toggle='tooltip' data-placement='top' title='View post'></span>" +
+                                            "</a>" +
+                                        "</div>" +
+                                    "</div>";
+                        postContainer += buttons;
+                        postContainer += "</div>";
+                    });
+                }
+                $('.posts-container-section').html(postContainer);
+            });
+            break;
+            
+        default:
+            break;
+    }
+
     fxUser.UIHelper();
     $("body").on("click", ".post_content, .like_post, .comment_post, .edit_comment, .delete_comment, .restore_comment,"+
                           ".edit_post, .share_post, .delete_post, .restore_post,"+

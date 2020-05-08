@@ -45,7 +45,7 @@ var fxAuth = {
 
 $(function () {
     fxAuth.UIHelper();
-    $("body").on("click", ".register_user, .login_use", function (event) {
+    $("body").on("click", ".register_user, .login_user", function (event) {
         
         event.preventDefault();
         event.stopPropagation();
@@ -61,6 +61,7 @@ $(function () {
         if (action == undefined) {
             posting = $.get(url);
         } else {
+            fd.append("_csrfToken", csrfToken);
             form.find("input, select").each(function () {
                 if ($(this).attr("type") != "file") {
                     fd.append($(this).attr("name"), $(this).val());
@@ -69,6 +70,11 @@ $(function () {
                 }
             });
             
+            if(className == 'login_user') {
+                // action = '/admin/apis/login.json'
+                action = '/users/login'
+            }
+
             posting = $.ajax({
                 type: "post",
                 url: action,
@@ -83,7 +89,8 @@ $(function () {
         }
 
         posting.done(function (data) {
-            if(data.success){
+            console.log(data);
+            if(data.hasOwnProperty('success')){
                 if(className == 'register_user') {
                     fx.displayNotify("User", 
                                      "Register Successful, your activation link has been sent to your email.", 

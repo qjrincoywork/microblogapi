@@ -7,6 +7,7 @@ use Cake\Utility\Security;
 use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
 use Cake\ORM\TableRegistry;
+use Firebase\JWT\JWT;
 /**
  * Users Controller
  *
@@ -18,6 +19,7 @@ class UsersController extends AppController
     public function initialize()
     {
         parent::initialize();
+        $this->loadModel('Users');
         $this->loadModel('Posts');
         $this->loadModel('Follows');
         $this->loadComponent('RequestHandler');
@@ -78,7 +80,7 @@ class UsersController extends AppController
 
     public function home()
     {
-        /* $id = $this->request->getSession()->read('Auth.User.id');
+        $id = $this->request->getSession()->read('Auth.User.id');
         $following = $this->Follows->find()
                                    ->select('Follows.following_id')
                                    ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
@@ -88,39 +90,59 @@ class UsersController extends AppController
             $ids[] = $val['following_id'];
         }
         $ids[] = $id;
-        
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]); */
-        $post = $this->Posts->newEntity();
-        $this->set(['post' => $post]);
-        // $this->set(['post' => $post, 'data' => $data, 
-        //             '_serialize' => ['data']]);
+        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
+        /* $token = \Firebase\JWT\JWT::encode([
+                    'id' => $user['id'],
+                    'exp' => time() + 604800,
+                ],Security::salt());
+        pr($token);
+        die('hits home'); */
+        $this->set(['data' => $data, '_serialize' => ['data']]);
     }
 
     public function login()
     {
-        $this->set('title', 'User Login');
-        if($this->request->getSession()->read('Auth.User.id')) {
-            return $this->redirect(['action' => 'home']);
-        }
-        
-        $this->viewBuilder()->setLayout('default');
         if($this->request->is('post')) {
             $user = $this->Auth->identify();
+            
             if($user) {
                 if($user['is_online'] == 2) {
-                    $datum['error'] = 'Please activate your account first.';
+                    $data['error'] = 'Please activate your account first.';
                 } else {
                     $userData = $this->Users->get($user['id']);
                     $userData->set(['is_online' => 1]);
                     if($this->Users->save($userData)) {
-                        $this->Auth->setUser($user);
-                        $datum['success'] = true;
+                        $this->set([
+                            'success' => true,
+                            'data' => [
+                                'token' => $token = \Firebase\JWT\JWT::encode([
+                                    'id' => $user['id'],
+                                    'exp' => time() + 604800,
+                                ],
+                                    Security::salt()),
+                            ],
+                            '_serialize' => ['success', 'data'],
+                        ]);
+                        // $data['success'] = true;
+                        // pr($data);
+                        // die('hits');
+                        // return $this->redirect($this->Auth->redirectUrl("/users/home"));
                     }
                 }
             } else {
-                $datum['error'] = 'Invalid username or password.';
+                $data['error'] = 'Invalid username or password.';
             }
-            return $this->jsonResponse($datum);
+            // $this->set(['post' => $post, 'data' => $data, 
+            //             '_serialize' => ['data']]);
+            /* $this->set(['datum' => $datum,
+                        '_serialize' => ['datum']
+            ]); */
+            /* $this->set([
+                'data' => $data,
+                'user' => $user,
+                '_serialize' => ['data', 'user']
+            ]); */
+            // return $this->jsonResponse($datum);
         }
     }
     
@@ -158,7 +180,6 @@ class UsersController extends AppController
             return $this->redirect(['action' => 'home']);
         }
         
-        $this->viewBuilder()->setLayout('default');
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $datum['success'] = false;

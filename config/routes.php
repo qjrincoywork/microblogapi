@@ -55,7 +55,17 @@ Router::scope('/', function (RouteBuilder $routes) {
      * Apply a middleware to the current route scope.
      * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
      */
-    $routes->connect('/', ['controller' => 'Users', 'action' => 'register', 'register']);
+    $routes->get(
+        '/',
+        ['controller' => 'Index', 'action' => 'index'],
+        'index:index'
+    );
+    $routes->get(
+        '/register',
+        ['controller' => 'Index', 'action' => 'register'],
+        'index:register'
+    );
+    // $routes->connect('/', ['controller' => 'Users', 'action' => 'register', 'register']);
     // $routes->scope('/users', function ($routes) {
     //     $routes->applyMiddleware('csrf');
     //     // ...
@@ -121,3 +131,8 @@ Router::scope('/', function (RouteBuilder $routes) {
  * });
  * ```
  */
+Router::scope('/admin', function (RouteBuilder $routes) {
+    $routes->setExtensions(['json']);
+    $routes->resources('Apis'); 
+    $routes->fallbacks(DashedRoute::class);
+});

@@ -22,7 +22,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
         <meta name="csrf-token" content="<?=$this->request->getParam('_csrfToken')?>">
         <link rel="icon" href="/img/microMinilogo.png">
         <title>
-            <?php echo $this->fetch('title'); ?>
+            <?php echo $title; ?>
         </title>
         <?= $this->Html->css(['font-face', 'all.min', 'fontawesome.min', 
                                    'material-design-iconic-font.min','fonts', 'bootstrap.min', 'app'
@@ -32,7 +32,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
         <div class="page-container">
             <header class="header-desktop">
                 <div class="col-md-1 offset-md-11">
-                    <?php if($this->request->getAttribute("here") == '/users/login'):?>
+                    <?php if($this->request->getAttribute("here") == '/'):?>
                     <?=
                         $this->Html->link(
                             'Sign up',
@@ -44,9 +44,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                     <?=
                         $this->Html->link(
                             'Login',
-                            ['controller' => 'Users', 'action' => 'login', '_full' => true],
+                            ['controller' => 'Index', 'action' => 'index', '_full' => true],
                             ['class' => 'auth-btn btn-sm btn-outline-secondary', 'escape' => false]
-                        );
+                        );  
                     ?>
                     <?php endif;?>
                 </div>

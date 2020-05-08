@@ -47,6 +47,8 @@ class AppController extends Controller
         // $this->loadComponent('Session');
         $this->loadComponent('Paginator');
         $this->loadComponent('Auth', [
+            // 'loginAction' => ['controller' => 'index', 'action' => 'index'],
+            // 'logoutRedirect' => ['controller' => 'index', 'action' => 'register'],
             'loginAction' => ['controller' => 'users', 'action' => 'login'],
             'logoutRedirect' => ['controller' => 'users', 'action' => 'register'],
             'authenticate' => [
@@ -57,7 +59,8 @@ class AppController extends Controller
                     ]
                 ]
             ],
-            'storage' => 'Session'
+            'storage' => 'Session',
+            'unauthorizedRedirect' => false
         ]);
         // $this->loadComponent('Csrf');
         /*
@@ -68,7 +71,7 @@ class AppController extends Controller
     }
 
     public function beforeFilter(Event $event) {
-        $this->Auth->allow(['register', 'activation', 'logout', 'testEmail']);
+        $this->Auth->allow(['login', 'register', 'activation', 'logout', 'testEmail']);
     }
 
     public function beforeRender(Event $event) {

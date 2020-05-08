@@ -4,7 +4,10 @@ namespace App\Model\Table;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\Event\Event;
 use Cake\Validation\Validator;
+use Cake\Auth\DefaultPasswordHasher;
+use Cake\Utility\Security;
 
 /**
  * Users Model
@@ -260,5 +263,22 @@ class UsersTable extends Table
         $rules->add($rules->isUnique(['email']));
         
         return $rules;
+    }
+
+    public function beforeSave(Event $event)
+    {
+        $entity = $event->getData('entity');
+
+        if ($entity->isNew()) {
+            $hasher = new DefaultPasswordHasher();
+            // Generate an API 'token'
+            $entity->api_key_plain = Security::hash(Security::randomBytes(32), 'sha256', false);
+            pr($entity);
+            die('hits');
+            // Bcrypt the token so BasicAuthenticate can check
+            // it during login.
+            $entity->api_key = $hasher->hash($entity->api_key_plain);
+        }
+        return true;
     }
 }

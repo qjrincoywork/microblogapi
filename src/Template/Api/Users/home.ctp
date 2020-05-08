@@ -1,5 +1,4 @@
 <?= $this->element('postform'); ?>
-<div class='posts-container-section'>
 <?php
     $article = '';
     if(isset($data)) {
@@ -141,4 +140,3 @@
         echo "</nav>";
     }
 ?>
-</div>
