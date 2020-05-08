@@ -34,7 +34,6 @@ class AppController extends Controller
             'enableBeforeRedirect' => false,
         ]);
     }
-    
     public function jsonResponse($data){
         $jsonData = json_encode($data);
         $response = $this->response->withType('json')->withStringBody($jsonData);
