@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Api;
 
-use App\Controller\Api\AppController;
 use Cake\Event\Event;
 use Cake\Utility\Security;
 use Cake\Mailer\Email;
@@ -35,47 +34,16 @@ class UsersController extends AppController
         }
     }
 
+    public function add()
+    {
+        // die('add');
+        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
+        $this->set(['data' => $data, '_serialize' => ['data']]);
+    }
     public function index()
     {
         $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
         $this->set(['data' => $data, '_serialize' => ['data']]);
-    }
-
-    public function getPosts($conditions) {
-        $this->paginate = [
-            'Posts' => [
-                'contain' => ['Users'],
-                'conditions' => [
-                    $conditions,
-                ],
-                'limit' => 4,
-                'order' => [
-                    'created' => 'desc',
-                ],
-            ]
-        ];
-        
-        return $this->paginate($this->Posts);
-    }
-    
-    public static function apiGateWay($url)
-    {
-        $output = array();
-        try {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            
-            $output = curl_exec($ch);
-            $info = curl_getinfo($ch);
-            curl_close($ch);
-            
-            return json_decode($output);
-        } catch (Exception $e) {
-            dd('error');
-        }
     }
 
     public function home()
@@ -103,46 +71,21 @@ class UsersController extends AppController
     public function login()
     {
         if($this->request->is('post')) {
-            $user = $this->Auth->identify();
-            
-            if($user) {
-                if($user['is_online'] == 2) {
-                    $data['error'] = 'Please activate your account first.';
+            $user = $this->Users->find()->where(['username' => $this->request->getData('username')])->first();
+            $valid = password_verify($this->request->getData('password'), $user->password);
+
+            if($valid) {
+                if($user->is_online == 2) {
+                    $datum['error'] = 'Please activate your account first.';
                 } else {
-                    $userData = $this->Users->get($user['id']);
-                    $userData->set(['is_online' => 1]);
-                    if($this->Users->save($userData)) {
-                        $this->set([
-                            'success' => true,
-                            'data' => [
-                                'token' => $token = \Firebase\JWT\JWT::encode([
-                                    'id' => $user['id'],
-                                    'exp' => time() + 604800,
-                                ],
-                                    Security::salt()),
-                            ],
-                            '_serialize' => ['success', 'data'],
-                        ]);
-                        // $data['success'] = true;
-                        // pr($data);
-                        // die('hits');
-                        // return $this->redirect($this->Auth->redirectUrl("/users/home"));
-                    }
+                    $datum['success'] = true;
+                    $datum['data'] = $user;
                 }
             } else {
-                $data['error'] = 'Invalid username or password.';
+                $datum['error'] = 'Invalid username or password.';
             }
-            // $this->set(['post' => $post, 'data' => $data, 
-            //             '_serialize' => ['data']]);
-            /* $this->set(['datum' => $datum,
-                        '_serialize' => ['datum']
-            ]); */
-            /* $this->set([
-                'data' => $data,
-                'user' => $user,
-                '_serialize' => ['data', 'user']
-            ]); */
-            // return $this->jsonResponse($datum);
+            
+            return $this->jsonResponse($datum);
         }
     }
     
@@ -184,7 +127,7 @@ class UsersController extends AppController
         if ($this->request->is('post')) {
             $datum['success'] = false;
             $postData = $this->request->getData();
-            $mytoken = Security::hash(Security::randomBytes(32));
+            /* $mytoken = Security::hash(Security::randomBytes(32));
             $postData['token'] = $mytoken;
             $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Register']);
             
@@ -198,7 +141,7 @@ class UsersController extends AppController
                         return $this->redirect(['action' => 'register']);
                     }
                 }
-            }
+            } */
         }
         $this->set('user', $user);
     }

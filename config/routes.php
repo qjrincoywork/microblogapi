@@ -17,7 +17,7 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Http\Middleware\CsrfProtectionMiddleware;
+// use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\DashedRoute;
@@ -55,16 +55,18 @@ Router::scope('/', function (RouteBuilder $routes) {
      * Apply a middleware to the current route scope.
      * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
      */
-    $routes->get(
+    /* $routes->connect(
         '/',
         ['controller' => 'Index', 'action' => 'index'],
         'index:index'
-    );
+    ); */
+    
     $routes->get(
         '/register',
         ['controller' => 'Index', 'action' => 'register'],
         'index:register'
     );
+    $routes->connect('/', ['controller' => 'Index', 'action' => 'index', 'index']);
     // $routes->connect('/', ['controller' => 'Users', 'action' => 'register', 'register']);
     // $routes->scope('/users', function ($routes) {
     //     $routes->applyMiddleware('csrf');
@@ -120,10 +122,21 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->fallbacks(DashedRoute::class);
 });
 
-Router::prefix('/api', function (RouteBuilder $routes) {
-    $routes->setExtensions(['json']);
+Router::prefix('api', function (RouteBuilder $routes) {
+    $routes->connect('/users/login', ['controller' => 'Users', 'action' => 'login'])
+           ->setMethods(['POST'])
+           ->setExtensions(['json']);
+    /* $routes->connect('/users/login', ['controller' => 'Users', 'action' => 'login'])
+           ->setMethods(['POST'])
+           ->setExtensions(['json']); */
+    // $routes->setMethods(['GET', 'POST']);
     // $routes->resources('Apis');
-    $routes->fallbacks(DashedRoute::class);
+    // $routes->resources('Users');
+    // $routes->post('/users/login', ['controller' => 'Users', 'action' => 'login', 'prefix' => 'api']);
+    // Router::connect('/users/login', ['controller' => 'Users', 'action' => 'login', 'prefix' => 'api'])/* ->setMethods(['GET', 'POST']) */;
+    $routes->fallbacks('InflectedRoute');
+    // $routes->connect('/', ['controller' => 'Users', 'action' => 'login']);
+    // $routes->fallbacks(DashedRoute::class);
 });
 
 /**
