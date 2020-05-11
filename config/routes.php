@@ -46,11 +46,6 @@ use Cake\Routing\Route\DashedRoute;
 Router::defaultRouteClass(DashedRoute::class);
 
 Router::scope('/', function (RouteBuilder $routes) {
-    Router::prefix('/api', function (RouteBuilder $routes) {
-        $routes->setExtensions(['json']);
-        // $routes->resources('Apis');
-        $routes->fallbacks(DashedRoute::class);
-    });
     // Register scoped middleware for in scopes.
     /* $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
         'httpOnly' => true
@@ -60,16 +55,18 @@ Router::scope('/', function (RouteBuilder $routes) {
      * Apply a middleware to the current route scope.
      * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
      */
-    $routes->get(
+    /* $routes->get(
         '/',
         ['controller' => 'Index', 'action' => 'index'],
         'index:index'
-    );
-    $routes->get(
+    ); */
+    /* $routes->get(
         '/register',
         ['controller' => 'Index', 'action' => 'register'],
         'index:register'
-    );
+    ); */
+    $routes->connect('/', ['controller' => 'Index', 'action' => 'index']);
+    $routes->connect('/register', ['controller' => 'Index', 'action' => 'register']);
     // $routes->connect('/', ['controller' => 'Users', 'action' => 'register', 'register']);
     // $routes->scope('/users', function ($routes) {
     //     $routes->applyMiddleware('csrf');
@@ -124,15 +121,12 @@ Router::scope('/', function (RouteBuilder $routes) {
      */
     $routes->fallbacks(DashedRoute::class);
 });
-
-/**
- * If you need a different set of middleware or none at all,
- * open new scope and define routes there.
- *
- * ```
- * Router::scope('/api', function (RouteBuilder $routes) {
- *     // No $routes->applyMiddleware() here.
- *     // Connect API actions here.
- * });
- * ```
- */
+Router::prefix('api', function (RouteBuilder $routes) {
+    // die('api hots');
+    $routes->setExtensions(['json']);
+    $routes->connect('/users/login', ['controller' => 'Users', 'action' => 'login'])
+           ->setMethods(['POST']);
+    $routes->connect('/users/register', ['controller' => 'Users', 'action' => 'register'])
+           ->setMethods(['POST']);
+    $routes->fallbacks('InflectedRoute');
+});
