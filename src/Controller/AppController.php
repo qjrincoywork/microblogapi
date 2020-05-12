@@ -49,10 +49,8 @@ class AppController extends Controller
         // $this->loadComponent('Session');
         $this->loadComponent('Paginator');
         $this->loadComponent('Auth', [
-            // 'loginAction' => ['controller' => 'index', 'action' => 'index'],
-            // 'logoutRedirect' => ['controller' => 'index', 'action' => 'register'],
-            'loginAction' => ['controller' => 'users', 'action' => 'login'],
-            'logoutRedirect' => ['controller' => 'users', 'action' => 'register'],
+            'loginAction' => ['controller' => 'index', 'action' => 'index'],
+            'logoutRedirect' => ['controller' => 'index', 'action' => 'register'],
             'authenticate' => [
                 'Form' => [
                     'fields' => [
@@ -167,6 +165,7 @@ class AppController extends Controller
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($ch);
+            // pr($result); die('app');
             $data = json_decode(strstr($result, '{'));
             curl_close($ch);
             
