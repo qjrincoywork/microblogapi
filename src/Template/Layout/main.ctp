@@ -5,7 +5,7 @@
         <meta name="csrf-token" content="<?=$this->request->getParam('_csrfToken')?>">
         <link rel="icon" href="/img/microMinilogo.png">
         <title>
-            <?php echo $this->fetch('title'); ?>
+            <?php echo $title; ?>
         </title>
         <?php
             echo $this->Html->css(['font-face','all.min','fontawesome.min',

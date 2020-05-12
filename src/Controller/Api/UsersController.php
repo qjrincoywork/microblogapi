@@ -34,13 +34,7 @@ class UsersController extends AppController
             $this->viewBuilder()->setLayout(false);
         }
     }
-
-    public function index()
-    {
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
-        $this->set(['data' => $data, '_serialize' => ['data']]);
-    }
-
+    
     public function getPosts($conditions) {
         $this->paginate = [
             'Posts' => [
@@ -54,33 +48,20 @@ class UsersController extends AppController
                 ],
             ]
         ];
-        
         return $this->paginate($this->Posts);
     }
     
-    public static function apiGateWay($url)
+    public function index()
     {
-        $output = array();
-        try {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            
-            $output = curl_exec($ch);
-            $info = curl_getinfo($ch);
-            curl_close($ch);
-            
-            return json_decode($output);
-        } catch (Exception $e) {
-            dd('error');
-        }
+        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
+        $this->set(['data' => $data, '_serialize' => ['data']]);
     }
-
+    
     public function home()
     {
-        $id = $this->request->getSession()->read('Auth.User.id');
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $id = $request->data->user_id;
         $following = $this->Follows->find()
                                    ->select('Follows.following_id')
                                    ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
@@ -91,23 +72,40 @@ class UsersController extends AppController
         }
         $ids[] = $id;
         $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
-        /* $token = \Firebase\JWT\JWT::encode([
-                    'id' => $user['id'],
-                    'exp' => time() + 604800,
-                ],Security::salt());
-        pr($token);
-        die('hits home'); */
-        $this->set(['data' => $data, '_serialize' => ['data']]);
+        return $this->jsonResponse($data);
+    }
+
+    public function postCount()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $id = $request->data->user_id;
+        $following = $this->Follows->find()
+                                   ->select('Follows.following_id')
+                                   ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
+                                   ->toArray();
+        $ids = [];
+        foreach($following as $key => $val) {
+            $ids[] = $val['following_id'];
+        }
+        $ids[] = $id;
+        $data = $this->Posts->find('all')
+                            ->select()
+                            ->where(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids])
+                            ->count();
+        return $this->jsonResponse(['rows' => $data]);
     }
 
     public function login()
     {
         if($this->request->is('post')) {
-            $user = $this->Auth->identify();
+            $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+            $user = $this->Users->find()->where(['username' => $request->data->username])->first();
+            $valid = password_verify($request->data->password, $user->password);
             
-            if($user) {
-                if($user['is_online'] == 2) {
-                    $data['error'] = 'Please activate your account first.';
+            if($valid) {
+                if($user->is_online == 2) {
+                    $datum['error'] = 'Please activate your account first.';
                 } else {
                     $userData = $this->Users->get($user['id']);
                     $userData->set(['is_online' => 1]);
@@ -182,9 +180,9 @@ class UsersController extends AppController
         
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            $datum['success'] = false;
-            $postData = $this->request->getData();
+            $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
             $mytoken = Security::hash(Security::randomBytes(32));
+            $postData = get_object_vars($request->data);
             $postData['token'] = $mytoken;
             $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Register']);
             

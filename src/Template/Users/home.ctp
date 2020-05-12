@@ -110,35 +110,26 @@
             $article .= "</div>";
         }
         
-        $paginator = $this->Paginator;
-        $paginator->setTemplates([
-            'number' => '<b><a class="pl-3" href="{{url}}"> {{text}} </a></b>',
-            'nextActive' => '<a class="fa fa-arrow-right pl-3" title="next" href="{{url}}"> {{text}} </a>',
-            'prevActive' => '<a class="fa fa-arrow-left pl-3" title="previous" href="{{url}}"> {{text}} </a>',
-            'first' => '<a class="fa fa-fast-backward pl-3" title="first" href="{{url}}"> {{text}} </a>',
-            'last' => '<a class="fa fa-fast-forward pl-3" title="last" href="{{url}}"> {{text}} </a>',
-            'current' => '<b><a class="text-secondary pl-3" title="current" href="{{url}}"> {{text}} </a></b>',
-        ]);
         echo $article;
-        echo "<nav class='paging'>";
-        echo $paginator->First('');
-        echo "  ";
-        
-        if($paginator->hasPrev()) {
-            echo $paginator->prev('');
+        if($pages > 1) {
+            if (isset($_GET['page'])) {
+                $page = $_GET['page'];
+            } else {
+                $page = 1;
+            }
+            $pagination = "<nav class='paging'>";
+                if($page > 1) {
+                    $pagination .= "<a class='fa fa-fast-backward pl-3' title='first' href='?page=1'></a>";
+                    $pagination .= "<a class='fa fa-arrow-left pl-3' title='previous' href='?page=".($page - 1)."'></a>";
+                }
+                
+                if($page < $pages) {
+                    $pagination .="<a class='fa fa-arrow-right pl-3' title='next' href='?page=".($page + 1)."'></a>
+                                    <a class='fa fa-fast-forward pl-3' title='last' href='?page=". $pages ."'></a>";
+                }
+                $pagination .= "</nav>";
+            echo $pagination;
         }
-        echo "  ";
-        
-        echo $paginator->numbers(['modulus' => 2]);
-        echo "  ";
-        
-        if($paginator->hasNext()) {
-            echo $paginator->next("");
-        }
-        echo "  ";
-    
-        echo $paginator->last('');
-        echo "</nav>";
     }
 ?>
 </div>

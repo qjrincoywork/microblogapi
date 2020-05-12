@@ -7,6 +7,7 @@ use Cake\Utility\Security;
 use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
 use Cake\ORM\TableRegistry;
+use Firebase\JWT\JWT;
 /**
  * Users Controller
  *
@@ -55,45 +56,23 @@ class UsersController extends AppController
         
         return $this->paginate($this->Posts);
     }
-    
-    public static function apiGateWay($url)
-    {
-        $output = array();
-        try {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            
-            $output = curl_exec($ch);
-            $info = curl_getinfo($ch);
-            curl_close($ch);
-            
-            return json_decode($output);
-        } catch (Exception $e) {
-            dd('error');
-        }
-    }
 
     public function home()
     {
-        /* $id = $this->request->getSession()->read('Auth.User.id');
-        $following = $this->Follows->find()
-                                   ->select('Follows.following_id')
-                                   ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
-                                   ->toArray();
-        $ids = [];
-        foreach($following as $key => $val) {
-            $ids[] = $val['following_id'];
-        }
-        $ids[] = $id;
-        
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]); */
+        $this->set('title', 'Home');
+        $id = $this->request->getSession()->read('Auth.User.id');
+        $postColumn = $this->apiGateWay('/api/users/postCount.json', ['user_id' => $id]);
+        $pages = ceil($postColumn->rows / 4);
         $post = $this->Posts->newEntity();
-        $this->set(['post' => $post]);
-        // $this->set(['post' => $post, 'data' => $data, 
-        //             '_serialize' => ['data']]);
+        $page = $this->request->getQuery('page');
+
+        if($page) {
+            $data = $this->apiGetGateWay("/api/users/home.json?page=".$page, ['user_id' => $id]);
+        } else {
+            $data = $this->apiGetGateWay('/api/users/home.json', ['user_id' => $id]);
+        }
+        
+        $this->set(compact('post', 'data', 'pages'));
     }
 
     public function login()
