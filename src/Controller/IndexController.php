@@ -48,7 +48,7 @@ class IndexController extends AppController
         
         return $this->paginate($this->Posts);
     }
-
+    
     public static function apiPostGateWay($url, $data)
     {
         $output = array();
@@ -95,13 +95,16 @@ class IndexController extends AppController
 
     public function index()
     {
+        if($this->request->getSession()->read('Auth.User.id')) {
+            return $this->redirect(['action' => 'home']);
+        }
         $this->set('title', 'User Login');
         $this->viewBuilder()->setLayout('default');
         if($this->request->is('post')) {
             $result = $this->apiPostGateWay('/api/users/login.json', $this->request->getData());
             if(isset($result->success)) {
                 $user = get_object_vars($result->data);
-                $this->Auth->setUser($result->data);
+                $this->Auth->setUser($user);
                 $datum['success'] = true;
             } else {
                 $datum = get_object_vars($result);
@@ -180,10 +183,13 @@ class IndexController extends AppController
         }
         
         $this->viewBuilder()->setLayout('default');
+        
         if($this->request->is('post')) {
             $result = $this->apiPostGateWay('/api/users/register.json', $this->request->getData());
-            if(isset($result->success) && $result->success) {
-                $datum['success'] = $result->success;
+            if(isset($result->success)) {
+                $user = get_object_vars($result->data);
+                $this->Auth->setUser($user);
+                $datum['success'] = true;
             } else {
                 $datum = get_object_vars($result);
             }

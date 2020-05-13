@@ -17,7 +17,7 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Http\Middleware\CsrfProtectionMiddleware;
+// use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\DashedRoute;
@@ -122,11 +122,8 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->fallbacks(DashedRoute::class);
 });
 Router::prefix('api', function (RouteBuilder $routes) {
-    // die('api hots');
     $routes->setExtensions(['json']);
-    $routes->connect('/users/login', ['controller' => 'Users', 'action' => 'login'])
-           ->setMethods(['POST']);
-    $routes->connect('/users/register', ['controller' => 'Users', 'action' => 'register'])
-           ->setMethods(['POST']);
+    $routes->post('/users/login', ['controller' => 'Users', 'action' => 'login']);
+    $routes->post('/users/register', ['controller' => 'Users', 'action' => 'register']);
     $routes->fallbacks('InflectedRoute');
 });

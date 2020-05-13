@@ -33,6 +33,12 @@ class UsersController extends AppController
         }
     }
 
+    public function add()
+    {
+        // die('add');
+        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
+        $this->set(['data' => $data, '_serialize' => ['data']]);
+    }
     public function index()
     {
         $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
@@ -115,7 +121,7 @@ class UsersController extends AppController
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $postData = $this->request->getData();
-            $mytoken = Security::hash(Security::randomBytes(32));
+            /* $mytoken = Security::hash(Security::randomBytes(32));
             $postData['token'] = $mytoken;
             $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Register']);
             
@@ -128,12 +134,7 @@ class UsersController extends AppController
                         $datum['success'] = true;
                     }
                 }
-            } else {
-                $errors = $this->formErrors($user);
-                $datum['errors'] = $errors;
-            }
-            
-            return $this->jsonResponse($datum);
+            } */
         }
     }
 
