@@ -5,7 +5,7 @@
     ];
     $this->Form->setTemplates($myTemplates);
     ?>
-    <?= $this->Form->create('User', ['id' => 'UserLoginForm', 'url' => ['controller' => 'users', 'action' => 'login']]); ?>
+    <?= $this->Form->create('User', ['id' => 'UserLoginForm']); ?>
     <?= $this->Form->control('username',
                         ['class' => 'form-control form-control-sm',
                             'placeholder' => 'Enter username ...',

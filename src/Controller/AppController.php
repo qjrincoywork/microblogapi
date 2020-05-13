@@ -71,7 +71,7 @@ class AppController extends Controller
     }
 
     public function beforeFilter(Event $event) {
-        $this->Auth->allow(['login', 'register', 'activation', 'logout', 'testEmail']);
+        $this->Auth->allow(['index', 'register', 'activation', 'logout', 'testEmail']);
     }
 
     public function beforeRender(Event $event) {

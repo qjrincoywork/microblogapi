@@ -55,6 +55,16 @@ Router::scope('/', function (RouteBuilder $routes) {
      * Apply a middleware to the current route scope.
      * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
      */
+    /* $routes->get(
+        '/',
+        ['controller' => 'Index', 'action' => 'index'],
+        'index:index'
+    ); */
+    /* $routes->get(
+        '/register',
+        ['controller' => 'Index', 'action' => 'register'],
+        'index:register'
+    ); */
     $routes->connect('/', ['controller' => 'Index', 'action' => 'index']);
     $routes->connect('/register', ['controller' => 'Index', 'action' => 'register']);
     // $routes->connect('/', ['controller' => 'Users', 'action' => 'register', 'register']);
@@ -113,7 +123,6 @@ Router::scope('/', function (RouteBuilder $routes) {
 });
 Router::prefix('api', function (RouteBuilder $routes) {
     $routes->setExtensions(['json']);
-    // $routes->get('/users/postCount', ['controller' => 'Users', 'action' => 'postCount']);
     $routes->post('/users/login', ['controller' => 'Users', 'action' => 'login']);
     $routes->post('/users/register', ['controller' => 'Users', 'action' => 'register']);
     $routes->fallbacks('InflectedRoute');

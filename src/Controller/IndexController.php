@@ -34,6 +34,9 @@ class IndexController extends AppController
 
     public function index()
     {
+        if($this->request->getSession()->read('Auth.User.id')) {
+            return $this->redirect(['action' => 'home']);
+        }
         $this->set('title', 'User Login');
         $this->viewBuilder()->setLayout('default');
         if($this->request->is('post')) {
@@ -51,6 +54,7 @@ class IndexController extends AppController
 
     public function register()
     {
+        $this->set('title', 'User Registration');
         if($this->request->getSession()->read('Auth.User.id')) {
             return $this->redirect(['action' => 'home']);
         }
