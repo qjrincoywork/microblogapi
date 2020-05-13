@@ -61,7 +61,6 @@ $(function () {
         if (action == undefined) {
             posting = $.get(url);
         } else {
-            fd.append("_csrfToken", csrfToken);
             form.find("input, select").each(function () {
                 if ($(this).attr("type") != "file") {
                     fd.append($(this).attr("name"), $(this).val());
@@ -69,11 +68,6 @@ $(function () {
                     fd.append($(this).attr("name"), $(this)[0].files[0]);
                 }
             });
-            
-            if(className == 'login_user') {
-                // action = '/admin/apis/login.json'
-                action = '/users/login'
-            }
 
             posting = $.ajax({
                 type: "post",

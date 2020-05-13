@@ -49,21 +49,26 @@ class IndexController extends AppController
         return $this->paginate($this->Posts);
     }
     
-    public static function apiGateWay($url)
+    public static function apiPostGateWay($url, $data)
     {
         $output = array();
         try {
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $host = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            $fullUrl = $host.$url;
+            $jsonData = json_encode($data);
+            $header = array('Content-Type:application/json');
+            curl_setopt($ch, CURLOPT_URL, $fullUrl);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_HEADER, true);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            
-            $output = curl_exec($ch);
-            $info = curl_getinfo($ch);
+
+            $result = curl_exec($ch);
+            $data = json_decode(strstr($result, '{'));
             curl_close($ch);
             
-            return json_decode($output);
+            return $data;
         } catch (Exception $e) {
             dd('error');
         }
@@ -90,8 +95,22 @@ class IndexController extends AppController
 
     public function index()
     {
+        if($this->request->getSession()->read('Auth.User.id')) {
+            return $this->redirect(['action' => 'home']);
+        }
         $this->set('title', 'User Login');
         $this->viewBuilder()->setLayout('default');
+        if($this->request->is('post')) {
+            $result = $this->apiPostGateWay('/api/users/login.json', $this->request->getData());
+            if(isset($result->success)) {
+                $user = get_object_vars($result->data);
+                $this->Auth->setUser($user);
+                $datum['success'] = true;
+            } else {
+                $datum = get_object_vars($result);
+            }
+            return $this->jsonResponse($datum);
+        }
     }
 
     public function login()
@@ -158,13 +177,24 @@ class IndexController extends AppController
 
     public function register()
     {
+        $this->set('title', 'User Registration');
         if($this->request->getSession()->read('Auth.User.id')) {
             return $this->redirect(['action' => 'home']);
         }
         
         $this->viewBuilder()->setLayout('default');
-        $user = $this->Users->newEntity();
-        // $this->set('user', $user);
+        
+        if($this->request->is('post')) {
+            $result = $this->apiPostGateWay('/api/users/register.json', $this->request->getData());
+            if(isset($result->success)) {
+                $user = get_object_vars($result->data);
+                $this->Auth->setUser($user);
+                $datum['success'] = true;
+            } else {
+                $datum = get_object_vars($result);
+            }
+            return $this->jsonResponse($datum);
+        }
     }
 
     public function activation($token) {

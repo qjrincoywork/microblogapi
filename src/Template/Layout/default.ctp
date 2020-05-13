@@ -36,7 +36,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                     <?=
                         $this->Html->link(
                             'Sign up',
-                            ['controller' => 'Users', 'action' => 'register', '_full' => true],
+                            '/register',
                             ['class' => 'auth-btn btn-sm btn-outline-secondary', 'escape' => false]
                         );
                     ?>
@@ -44,7 +44,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                     <?=
                         $this->Html->link(
                             'Login',
-                            ['controller' => 'Index', 'action' => 'index', '_full' => true],
+                            '/',
                             ['class' => 'auth-btn btn-sm btn-outline-secondary', 'escape' => false]
                         );  
                     ?>

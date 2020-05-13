@@ -49,8 +49,8 @@ class AppController extends Controller
         $this->loadComponent('Auth', [
             // 'loginAction' => ['controller' => 'index', 'action' => 'index'],
             // 'logoutRedirect' => ['controller' => 'index', 'action' => 'register'],
-            'loginAction' => ['controller' => 'users', 'action' => 'login'],
-            'logoutRedirect' => ['controller' => 'users', 'action' => 'register'],
+            'loginAction' => ['controller' => 'index', 'action' => 'index'],
+            'logoutRedirect' => ['controller' => 'index', 'action' => 'register'],
             'authenticate' => [
                 'Form' => [
                     'fields' => [
@@ -71,7 +71,7 @@ class AppController extends Controller
     }
 
     public function beforeFilter(Event $event) {
-        $this->Auth->allow(['login', 'register', 'activation', 'logout', 'testEmail']);
+        $this->Auth->allow(['index', 'register', 'activation', 'logout', 'testEmail']);
     }
 
     public function beforeRender(Event $event) {
