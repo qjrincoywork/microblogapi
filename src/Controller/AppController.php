@@ -16,6 +16,8 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Firebase\JWT\JWT;
+use Cake\Utility\Security;
 
 /**
  * Application Controller
@@ -47,8 +49,6 @@ class AppController extends Controller
         // $this->loadComponent('Session');
         $this->loadComponent('Paginator');
         $this->loadComponent('Auth', [
-            // 'loginAction' => ['controller' => 'index', 'action' => 'index'],
-            // 'logoutRedirect' => ['controller' => 'index', 'action' => 'register'],
             'loginAction' => ['controller' => 'index', 'action' => 'index'],
             'logoutRedirect' => ['controller' => 'index', 'action' => 'register'],
             'authenticate' => [
@@ -94,5 +94,124 @@ class AppController extends Controller
         $jsonData = json_encode($data);
         $response = $this->response->withType('json')->withStringBody($jsonData);
         return $response;
+    }
+    
+    public function apiPostGateWay($url, $data)
+    {
+        $output = array();
+        try {
+            $ch = curl_init();
+            $host = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            $fullUrl = $host.$url;
+            $key = JWT::encode([
+                        'exp' => time() + 604800,
+                        'data' => $data,
+                    ], Security::salt());
+
+            $payload = array(
+                "iss" => $host,
+                "iat" => time(),
+                'exp' => time() + 604800,
+                "data" => $data
+            );
+            
+            $token = JWT::encode($payload, $key);
+            $jsonData = json_encode(['token' => $token, 'api_key' => $key]);
+            
+            $header = array('Content-Type:application/json');
+            curl_setopt($ch, CURLOPT_URL, $fullUrl);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $result = curl_exec($ch);
+            $data = json_decode(strstr($result, '{'));
+            curl_close($ch);
+            
+            return $data;
+        } catch (Exception $e) {
+            dd('error');
+        }
+    }
+    
+    public function apiGateWay($url, $data)
+    {
+        $output = array();
+        try {
+            $ch = curl_init();
+            $host = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            $fullUrl = $host.$url;
+            $key = JWT::encode([
+                        'exp' => time() + 604800,
+                        'data' => $data,
+                    ], Security::salt());
+                    
+            $payload = array(
+                "iss" => $host,
+                "iat" => time(),
+                'exp' => time() + 604800,
+                "data" => $data
+            );
+            
+            $token = JWT::encode($payload, $key);
+            $jsonData = json_encode(['token' => $token, 'api_key' => $key]);
+            
+            $header = array('Content-Type:application/json');
+            curl_setopt($ch, CURLOPT_URL, $fullUrl);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $result = curl_exec($ch);
+            // pr($result); die('app');
+            $data = json_decode(strstr($result, '{'));
+            curl_close($ch);
+            
+            return $data;
+        } catch (Exception $e) {
+            dd('error');
+        }
+    }
+    
+    public function apiGetGateWay($url, $data)
+    {
+        $output = array();
+        try {
+            $ch = curl_init();
+            $host = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            $fullUrl = $host.$url;
+            $key = JWT::encode([
+                        'exp' => time() + 604800,
+                        'data' => $data,
+                    ], Security::salt());
+                    
+            $payload = array(
+                "iss" => $host,
+                "iat" => time(),
+                'exp' => time() + 604800,
+                "data" => $data
+            );
+            
+            $token = JWT::encode($payload, $key);
+            $jsonData = json_encode(['token' => $token, 'api_key' => $key]);
+            
+            $header = array('Content-Type:application/json');
+            curl_setopt($ch, CURLOPT_URL, $fullUrl);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $result = curl_exec($ch);
+            // pr($result); die('app');
+            $data = json_decode(strstr($result, '[{'));
+            curl_close($ch);
+            
+            return $data;
+        } catch (Exception $e) {
+            dd('error');
+        }
     }
 }

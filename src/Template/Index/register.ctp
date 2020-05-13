@@ -1,4 +1,4 @@
-<div class="container pt-4">
+<div class="container pt-4 mb-5">
     <div class="row">
         <div class="col-md-6">
             <div class="image microblogLogo" style="text-align: center;">

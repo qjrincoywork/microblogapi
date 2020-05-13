@@ -32,22 +32,34 @@ class UsersController extends AppController
             $this->viewBuilder()->setLayout(false);
         }
     }
-
-    public function add()
-    {
-        // die('add');
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
-        $this->set(['data' => $data, '_serialize' => ['data']]);
+    
+    public function getPosts($conditions) {
+        $this->paginate = [
+            'Posts' => [
+                'contain' => ['Users'],
+                'conditions' => [
+                    $conditions,
+                ],
+                'limit' => 4,
+                'order' => [
+                    'created' => 'desc',
+                ],
+            ]
+        ];
+        return $this->paginate($this->Posts);
     }
+    
     public function index()
     {
         $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
         $this->set(['data' => $data, '_serialize' => ['data']]);
     }
-
+    
     public function home()
     {
-        $id = $this->request->getSession()->read('Auth.User.id');
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $id = $request->data->user_id;
         $following = $this->Follows->find()
                                    ->select('Follows.following_id')
                                    ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
@@ -58,21 +70,37 @@ class UsersController extends AppController
         }
         $ids[] = $id;
         $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
-        /* $token = \Firebase\JWT\JWT::encode([
-                    'id' => $user['id'],
-                    'exp' => time() + 604800,
-                ],Security::salt());
-        pr($token);
-        die('hits home'); */
-        $this->set(['data' => $data, '_serialize' => ['data']]);
+        return $this->jsonResponse($data);
+    }
+
+    public function postCount()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $id = $request->data->user_id;
+        $following = $this->Follows->find()
+                                   ->select('Follows.following_id')
+                                   ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
+                                   ->toArray();
+        $ids = [];
+        foreach($following as $key => $val) {
+            $ids[] = $val['following_id'];
+        }
+        $ids[] = $id;
+        $data = $this->Posts->find('all')
+                            ->select()
+                            ->where(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids])
+                            ->count();
+        return $this->jsonResponse(['rows' => $data]);
     }
 
     public function login()
     {
         if($this->request->is('post')) {
-            $user = $this->Users->find()->where(['username' => $this->request->getData('username')])->first();
-            $valid = password_verify($this->request->getData('password'), $user->password);
-
+            $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+            $user = $this->Users->find()->where(['username' => $request->data->username])->first();
+            $valid = password_verify($request->data->password, $user->password);
+            
             if($valid) {
                 if($user->is_online == 2) {
                     $datum['error'] = 'Please activate your account first.';
@@ -120,8 +148,9 @@ class UsersController extends AppController
     {
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            $postData = $this->request->getData();
-            /* $mytoken = Security::hash(Security::randomBytes(32));
+            $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+            $mytoken = Security::hash(Security::randomBytes(32));
+            $postData = get_object_vars($request->data);
             $postData['token'] = $mytoken;
             $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Register']);
             
@@ -134,7 +163,11 @@ class UsersController extends AppController
                         $datum['success'] = true;
                     }
                 }
-            } */
+            } else {
+                $errors = $this->formErrors($user);
+                $datum['errors'] = $errors;
+            }
+            return $this->jsonResponse($datum);
         }
     }
 

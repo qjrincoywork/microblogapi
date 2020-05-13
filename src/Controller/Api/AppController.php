@@ -9,6 +9,15 @@ class AppController extends Controller
     public function initialize()
     {
         parent::initialize();
+        $this->loadComponent('Paginator');
+    }
+
+    public function formErrors($data) {
+        $errors = [];
+        foreach($data->getErrors() as $key => $val) {
+            $errors[$key] = array_values($val);
+        }
+        return $errors;
     }
     
     public function jsonResponse($data){

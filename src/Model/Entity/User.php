@@ -41,43 +41,31 @@ class User extends Entity
 
     protected function _getFullName()
     {
-        $session = new Session;
-        $id = $session->read('Auth.User.id');
-        if($id) {
-            $middleInitial = empty($this->_properties['middle_name']) ? '' : substr($this->_properties['middle_name'], 0, 1).". ";
-            $fullName = ucwords($this->_properties['first_name'].' '.$middleInitial.$this->_properties['last_name'].' '.$this->_properties['suffix']);
-            
-            return $fullName;
-        }
+        $middleInitial = empty($this->_properties['middle_name']) ? '' : substr($this->_properties['middle_name'], 0, 1).". ";
+        $fullName = ucwords($this->_properties['first_name'].' '.$middleInitial.$this->_properties['last_name'].' '.$this->_properties['suffix']);
+        
+        return $fullName;
     }
     
     protected function _getProfileImage()
     {
-        $session = new Session;
-        $id = $session->read('Auth.User.id');
-        if($id) {
-            if(!$this->_properties['image']) {
-                if($this->_properties['gender']) {
-                    $image = '/img/default_avatar_m.svg';
-                } else {
-                    $image = '/img/default_avatar_f.svg';
-                }
+        if(!$this->_properties['image']) {
+            if($this->_properties['gender']) {
+                $image = '/img/default_avatar_m.svg';
             } else {
-                $image = '/'.$this->_properties['image'];
+                $image = '/img/default_avatar_f.svg';
             }
-            return $image;
+        } else {
+            $image = '/'.$this->_properties['image'];
         }
+        return $image;
     }
     
     protected function _getJoined()
     {
-        $session = new Session;
-        $id = $session->read('Auth.User.id');
-        if($id) {
-            if(isset($this->_properties['created'])) {
-                $joined = date(' M Y', strtotime($this->_properties['created']));
-                return $joined;
-            }
+        if(isset($this->_properties['created'])) {
+            $joined = date(' M Y', strtotime($this->_properties['created']));
+            return $joined;
         }
     }
     
