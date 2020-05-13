@@ -18,7 +18,6 @@ class UsersController extends AppController
     public function initialize()
     {
         parent::initialize();
-        $this->loadModel('Users');
         $this->loadModel('Posts');
         $this->loadModel('Follows');
         $this->loadComponent('RequestHandler');
@@ -119,13 +118,8 @@ class UsersController extends AppController
 
     public function register()
     {
-        if($this->request->getSession()->read('Auth.User.id')) {
-            return $this->redirect(['action' => 'home']);
-        }
-        
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            $datum['success'] = false;
             $postData = $this->request->getData();
             /* $mytoken = Security::hash(Security::randomBytes(32));
             $postData['token'] = $mytoken;
@@ -137,13 +131,11 @@ class UsersController extends AppController
                     $userName = $user->username;
                     $to = $user->email;
                     if($this->sendEmail($userName, $fullName, $to, $mytoken)) {
-                        $this->Flash->success(__('Email has been sent to activate your account.'));
-                        return $this->redirect(['action' => 'register']);
+                        $datum['success'] = true;
                     }
                 }
             } */
         }
-        $this->set('user', $user);
     }
 
     public function activation($token) {

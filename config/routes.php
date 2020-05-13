@@ -55,18 +55,18 @@ Router::scope('/', function (RouteBuilder $routes) {
      * Apply a middleware to the current route scope.
      * Requires middleware to be registered via `Application::routes()` with `registerMiddleware()`
      */
-    /* $routes->connect(
+    /* $routes->get(
         '/',
         ['controller' => 'Index', 'action' => 'index'],
         'index:index'
     ); */
-    
-    $routes->get(
+    /* $routes->get(
         '/register',
         ['controller' => 'Index', 'action' => 'register'],
         'index:register'
-    );
-    $routes->connect('/', ['controller' => 'Index', 'action' => 'index', 'index']);
+    ); */
+    $routes->connect('/', ['controller' => 'Index', 'action' => 'index']);
+    $routes->connect('/register', ['controller' => 'Index', 'action' => 'register']);
     // $routes->connect('/', ['controller' => 'Users', 'action' => 'register', 'register']);
     // $routes->scope('/users', function ($routes) {
     //     $routes->applyMiddleware('csrf');
@@ -121,32 +121,9 @@ Router::scope('/', function (RouteBuilder $routes) {
      */
     $routes->fallbacks(DashedRoute::class);
 });
-
 Router::prefix('api', function (RouteBuilder $routes) {
-    $routes->connect('/users/login', ['controller' => 'Users', 'action' => 'login'])
-           ->setMethods(['POST'])
-           ->setExtensions(['json']);
-    /* $routes->connect('/users/login', ['controller' => 'Users', 'action' => 'login'])
-           ->setMethods(['POST'])
-           ->setExtensions(['json']); */
-    // $routes->setMethods(['GET', 'POST']);
-    // $routes->resources('Apis');
-    // $routes->resources('Users');
-    // $routes->post('/users/login', ['controller' => 'Users', 'action' => 'login', 'prefix' => 'api']);
-    // Router::connect('/users/login', ['controller' => 'Users', 'action' => 'login', 'prefix' => 'api'])/* ->setMethods(['GET', 'POST']) */;
+    $routes->setExtensions(['json']);
+    $routes->post('/users/login', ['controller' => 'Users', 'action' => 'login']);
+    $routes->post('/users/register', ['controller' => 'Users', 'action' => 'register']);
     $routes->fallbacks('InflectedRoute');
-    // $routes->connect('/', ['controller' => 'Users', 'action' => 'login']);
-    // $routes->fallbacks(DashedRoute::class);
 });
-
-/**
- * If you need a different set of middleware or none at all,
- * open new scope and define routes there.
- *
- * ```
- * Router::scope('/api', function (RouteBuilder $routes) {
- *     // No $routes->applyMiddleware() here.
- *     // Connect API actions here.
- * });
- * ```
- */

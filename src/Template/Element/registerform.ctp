@@ -117,7 +117,7 @@
                 ?>
                 </div>
                 <div class="col-md-12">
-                <?= $this->Form->button("Register",['class'=>'register_use auth-btn btn btn-secondary form-control mt-3']); ?>
+                <?= $this->Form->button("Register",['class'=>'register_user auth-btn btn btn-secondary form-control mt-3']); ?>
                 <?= $this->Form->end(); ?>
                 </div>
             </div>
