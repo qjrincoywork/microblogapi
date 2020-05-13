@@ -66,7 +66,7 @@ class UsersController extends AppController
         $post = $this->Posts->newEntity();
         $page = $this->request->getQuery('page');
 
-        if($page) {
+        if($page <= $pages) {
             $data = $this->apiGetGateWay("/api/users/home.json?page=".$page, ['user_id' => $id]);
         } else {
             $data = $this->apiGetGateWay('/api/users/home.json', ['user_id' => $id]);
