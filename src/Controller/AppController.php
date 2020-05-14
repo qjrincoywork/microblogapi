@@ -203,6 +203,7 @@ class AppController extends Controller
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($ch);
+            // pr($result); die('app');
             $data = json_decode(strstr($result, '[{'));
             curl_close($ch);
             
