@@ -69,10 +69,75 @@ class UsersController extends AppController
             $ids[] = $val['following_id'];
         }
         $ids[] = $id;
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
+        $posts = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
+        $data = [];
+        foreach ($posts as $post) {
+            $likedBefore = $this->likedBefore($post->id, $id);
+            $sharedPost = $this->getSharedPost($post->post_id);
+            $isLiked = $this->postReaction($post->id, $id, 'Likes');
+            $isCommented = $this->postReaction($post->id, $id, 'Comments');
+            $isShared = $this->postReaction($post->id, $id, 'Posts');
+            
+            $likeCount = $this->reactionCount($post->id, 'Likes');
+            $commentCount = $this->reactionCount($post->id, 'Comments');
+            $shareCount = $this->reactionCount($post->id, 'Posts');
+            
+            $post->shared_post = $sharedPost;
+            $post->liked_before = $likedBefore;
+            $post->is_liked = $isLiked;
+            $post->is_commented = $isCommented;
+            $post->is_shared = $isShared;
+
+            $post->like_count = $likeCount;
+            $post->comment_count = $commentCount;
+            $post->share_count = $shareCount;
+            $data[] = $post;
+        }
         return $this->jsonResponse($data);
     }
 
+    public function getSharedPost($postId) {
+        $post = TableRegistry::get('Posts');
+        $data = $post->find('all', [
+                                'contain' => ['Users'],
+                                'conditions' => ['Posts.deleted' => 0,'Posts.id' => $postId]
+                            ])->first();
+        return $data;
+    }
+
+    public function reactionCount($postId, $reaction) {
+        $model = TableRegistry::get($reaction);
+        $count = $model->find('all',[
+            'conditions' => [$reaction.".post_id" => $postId,
+                             $reaction.".deleted" => 0]
+        ])->count();
+        
+        return $count;
+    }
+    
+    public function likedBefore($postId, $userId) {
+        $post = TableRegistry::get('Likes');
+        $data = $post->find('all',[
+                                'conditions' => ["Likes.user_id" => $userId,
+                                                "Likes.post_id" => $postId]
+                            ])->first();
+        
+        $hasReacted = ($data) ? true : false;
+        return $hasReacted;
+    }
+
+    public function postReaction($postId, $userId, $reaction) {
+        $post = TableRegistry::get($reaction);
+        $data = $post->find('all',[
+                                'conditions' => [$reaction.'.user_id' => $userId, 
+                                                $reaction.".post_id" => $postId,
+                                                $reaction.".deleted" => 0]
+                            ])->first();
+        
+        $hasReacted = ($data) ? true : false;
+        return $hasReacted;
+    }
+    
     public function postCount()
     {
         $request = JWT::decode($this->request->getData('token'), 
