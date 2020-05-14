@@ -40,11 +40,11 @@ class PostsController extends AppController
         } else {
             $comments = $this->apiGetGateWay('/api/posts/postComments.json', $id);
         }
-
+        
         $this->set(compact('data', 'comments', 'pages'));
         $this->set('title', 'User Post');
     }
-
+    
     public function add()
     {
         $post = $this->Posts->newEntity();

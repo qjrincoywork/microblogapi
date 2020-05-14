@@ -18,7 +18,7 @@ class PostsController extends AppController
         $this->loadModel('Follows');
         $this->loadComponent('RequestHandler');
     }
-
+    
     public function add()
     {
         $post = $this->Posts->newEntity();
@@ -61,7 +61,7 @@ class PostsController extends AppController
             return $this->jsonResponse($datum);
         }
     }
-
+    
     public function view()
     {
         $request = JWT::decode($this->request->getData('token'), 
@@ -72,7 +72,7 @@ class PostsController extends AppController
                                    
         return $this->jsonResponse($data);
     }
-
+    
     public function postComments()
     {
         $request = JWT::decode($this->request->getData('token'), 
@@ -88,7 +88,7 @@ class PostsController extends AppController
         $datum = $this->paginate('Comments');
         return $this->jsonResponse($datum);
     }
-
+    
     public function commentCount()
     {
         $request = JWT::decode($this->request->getData('token'), 
