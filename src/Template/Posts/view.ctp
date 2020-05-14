@@ -160,7 +160,7 @@
             $comment .= $userProfile;
             $commentContent =       "<div class='post-content col-sm-12'>
                                         <p>";
-            $commentContent .=           $val['content'];
+            $commentContent .=           $val->content;
             $commentContent .=         "</p>
                                      </div>";
             $commentContent .=   "</div>";
@@ -170,7 +170,26 @@
         }
         echo $comment;
         
-        $paginator = $this->Paginator;
+        if($pages > 1) {
+            if (isset($_GET['page'])) {
+                $page = $_GET['page'];
+            } else {
+                $page = 1;
+            }
+            $pagination = "<nav class='paging'>";
+                if($page > 1) {
+                    $pagination .= "<a class='fa fa-fast-backward pl-3' title='first' href='?page=1'></a>";
+                    $pagination .= "<a class='fa fa-arrow-left pl-3' title='previous' href='?page=".($page - 1)."'></a>";
+                }
+                
+                if($page < $pages) {
+                    $pagination .="<a class='fa fa-arrow-right pl-3' title='next' href='?page=".($page + 1)."'></a>
+                                    <a class='fa fa-fast-forward pl-3' title='last' href='?page=". $pages ."'></a>";
+                }
+                $pagination .= "</nav>";
+            echo $pagination;
+        }
+        /* $paginator = $this->Paginator;
         $paginator->setTemplates([
             'number' => '<b><a class="pl-3" href="{{url}}"> {{text}} </a></b>',
             'nextActive' => '<a class="fa fa-arrow-right pl-3" title="next" href="{{url}}"> {{text}} </a>',
@@ -198,7 +217,7 @@
         echo "  ";
 
         echo $paginator->last('');
-        echo "</nav>";
+        echo "</nav>"; */
     }
 ?>
 <?php endif;?>

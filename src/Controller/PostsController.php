@@ -30,20 +30,18 @@ class PostsController extends AppController
     
     public function view($id)
     {
-        $data = $this->Posts->find('all', ['contain' => ['Users'],
-                                           'conditions' => ['Posts.id' => $id,'Posts.deleted' => 0],
-                ])->first();
+        $data = $this->apiGateWay('/api/posts/view.json', $id);
+        $column = $this->apiGateWay('/api/posts/commentCount.json', $id);
+        $pages = ceil($column->rows / 3);
+        $page = $this->request->getQuery('page');
         
-        $this->paginate = [
-            'limit' => 3,
-            'contain' => ['Users'],
-            'conditions' => ['Comments.post_id' => $id, 'Comments.deleted' => 0],
-            'order' => [
-                'Comments.created'
-            ]
-        ];
-        $comments = $this->paginate('Comments');
-        $this->set(compact('data', 'comments'));
+        if($page <= $pages) {
+            $comments = $this->apiGetGateWay("/api/posts/postComments.json?page=".$page, $id);
+        } else {
+            $comments = $this->apiGetGateWay('/api/posts/postComments.json', $id);
+        }
+
+        $this->set(compact('data', 'comments', 'pages'));
         $this->set('title', 'User Post');
     }
 
@@ -56,7 +54,7 @@ class PostsController extends AppController
             $postData = $this->request->getData();
             $postData['user_id'] = $id;
             $result = $this->apiGateWay('/api/posts/add.json', $postData);
-            
+
             if(isset($result->success) && $result->success) {
                 $datum['success'] = $result->success;
             } else {

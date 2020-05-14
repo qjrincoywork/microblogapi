@@ -14,7 +14,7 @@ class PostsController extends AppController
     {
         parent::initialize();
         $this->loadModel('Users');
-        $this->loadModel('Users');
+        $this->loadModel('Comments');
         $this->loadModel('Follows');
         $this->loadComponent('RequestHandler');
     }
@@ -22,7 +22,7 @@ class PostsController extends AppController
     public function add()
     {
         $post = $this->Posts->newEntity();
-        // $datum['success'] = false;
+        $datum['success'] = false;
         if ($this->request->is('post')) {
             $request = JWT::decode($this->request->getData('token'), 
                                    $this->request->getData('api_key'), ['HS256']);
@@ -60,5 +60,44 @@ class PostsController extends AppController
             
             return $this->jsonResponse($datum);
         }
+    }
+
+    public function view()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $data = $this->Posts->find('all', ['contain' => ['Users'],
+                                           'conditions' => ['Posts.id' => $request->data,'Posts.deleted' => 0],
+                                   ])->first();
+                                   
+        return $this->jsonResponse($data);
+    }
+
+    public function postComments()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $this->paginate = [
+            'limit' => 3,
+            'contain' => ['Users'],
+            'conditions' => ['Comments.post_id' => $request->data, 'Comments.deleted' => 0],
+            'order' => [
+                'Comments.created'
+            ]
+        ];
+        $datum = $this->paginate('Comments');
+        return $this->jsonResponse($datum);
+    }
+
+    public function commentCount()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $id = $request->data;
+        $data = $this->Comments->find('all')
+                               ->select()
+                               ->where(['Comments.deleted' => 0, 'Comments.post_id' => $id])
+                               ->count();
+        return $this->jsonResponse(['rows' => $data]);
     }
 }
