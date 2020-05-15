@@ -72,6 +72,49 @@ class UsersController extends AppController
         $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
         return $this->jsonResponse($data);
     }
+    
+    public function profile()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $profile = $this->Users->find('all', [
+                                        'conditions' => ['Users.id' => $request->data, 'Users.is_online !=' => 2]
+                                     ])->first();
+        return $this->jsonResponse($profile);
+    }
+    
+    public function profilePosts()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $condition = get_object_vars($request->data->condition);
+        $id = $request->data->user_id;
+        $posts = $this->getPosts($condition);
+        $data = [];
+        foreach ($posts as $post) {
+            $likedBefore = $this->likedBefore($post->id, $id);
+            $sharedPost = $this->getSharedPost($post->post_id);
+            $isLiked = $this->postReaction($post->id, $id, 'Likes');
+            $isCommented = $this->postReaction($post->id, $id, 'Comments');
+            $isShared = $this->postReaction($post->id, $id, 'Posts');
+            
+            $likeCount = $this->reactionCount($post->id, 'Likes');
+            $commentCount = $this->reactionCount($post->id, 'Comments');
+            $shareCount = $this->reactionCount($post->id, 'Posts');
+            
+            $post->shared_post = $sharedPost;
+            $post->liked_before = $likedBefore;
+            $post->is_liked = $isLiked;
+            $post->is_commented = $isCommented;
+            $post->is_shared = $isShared;
+
+            $post->like_count = $likeCount;
+            $post->comment_count = $commentCount;
+            $post->share_count = $shareCount;
+            $data[] = $post;
+        }
+        return $this->jsonResponse($data);
+    }
 
     public function postCount()
     {
@@ -192,33 +235,6 @@ class UsersController extends AppController
             $this->Flash->error(__('Account was already verified!'));
             $this->redirect(['controller' => 'users', 'action' => 'login']);
         }
-    }
-    
-    public function profile($id)
-    {
-        $conditions = [];
-        if(!$id) {
-            throw new NotFoundException();
-        }
-        $myId = $this->request->getSession()->read('Auth.User.id');
-        
-        if($myId != $id) {
-            $conditions = ['Posts.user_id' => $id, 'Posts.deleted' => 0];
-        } else {
-            $conditions = ['Posts.user_id' => $id];
-        }
-        
-        $profile = $this->Users->find('all', [
-                                        'conditions' => ['Users.id' => $id, 'Users.is_online !=' => 2]
-                                     ])->first();
-
-        if(!$profile) {
-            throw new NotFoundException();
-        }
-        
-        $data = $this->getPosts($conditions);
-        
-        $this->set(compact('data', 'profile'));
     }
 
     public function search($user) {
