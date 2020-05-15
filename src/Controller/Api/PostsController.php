@@ -176,4 +176,27 @@ class PostsController extends AppController
         ]);
         return $this->jsonResponse($data);
     }
+    
+    public function delete()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        if($this->request->is(['post'])) {
+            $datum['success'] = false;
+            $postData = get_object_vars($request->data);
+            $postDetails = $this->Posts->get($postData['id']);
+            $post = $this->Posts->patchEntity($postDetails, $postData);
+            
+            if($post->getErrors()) {
+                $errors = $this->formErrors($post);
+                $datum['errors'] = $errors;
+            } else {
+                if ($this->Posts->save($post)) {
+                    $datum['success'] = true;
+                }
+            }
+            
+            return $this->jsonResponse($datum);
+        }
+    }
 }
