@@ -3,7 +3,6 @@ namespace App\Controller\Api;
 
 use Cake\Event\Event;
 use Cake\Utility\Security;
-use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
 use Cake\ORM\TableRegistry;
 use Firebase\JWT\JWT;
@@ -26,11 +25,6 @@ class UsersController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->viewBuilder()->setLayout('main');
-        
-        if($this->request->is('ajax')) {
-            $this->viewBuilder()->setLayout(false);
-        }
     }
     
     public function getPosts($conditions) {
@@ -96,69 +90,6 @@ class UsersController extends AppController
         return $this->jsonResponse($data);
     }
 
-    public function getSharedPost($postId) {
-        $post = TableRegistry::get('Posts');
-        $data = $post->find('all', [
-                                'contain' => ['Users'],
-                                'conditions' => ['Posts.deleted' => 0,'Posts.id' => $postId]
-                            ])->first();
-        return $data;
-    }
-
-    public function reactionCount($postId, $reaction) {
-        $model = TableRegistry::get($reaction);
-        $count = $model->find('all',[
-            'conditions' => [$reaction.".post_id" => $postId,
-                             $reaction.".deleted" => 0]
-        ])->count();
-        
-        return $count;
-    }
-    
-    public function likedBefore($postId, $userId) {
-        $post = TableRegistry::get('Likes');
-        $data = $post->find('all',[
-                                'conditions' => ["Likes.user_id" => $userId,
-                                                "Likes.post_id" => $postId]
-                            ])->first();
-        
-        $hasReacted = ($data) ? true : false;
-        return $hasReacted;
-    }
-
-    public function postReaction($postId, $userId, $reaction) {
-        $post = TableRegistry::get($reaction);
-        $data = $post->find('all',[
-                                'conditions' => [$reaction.'.user_id' => $userId, 
-                                                $reaction.".post_id" => $postId,
-                                                $reaction.".deleted" => 0]
-                            ])->first();
-        
-        $hasReacted = ($data) ? true : false;
-        return $hasReacted;
-    }
-    
-    public function postCount()
-    {
-        $request = JWT::decode($this->request->getData('token'), 
-                               $this->request->getData('api_key'), ['HS256']);
-        $id = $request->data->user_id;
-        $following = $this->Follows->find()
-                                   ->select('Follows.following_id')
-                                   ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
-                                   ->toArray();
-        $ids = [];
-        foreach($following as $key => $val) {
-            $ids[] = $val['following_id'];
-        }
-        $ids[] = $id;
-        $data = $this->Posts->find('all')
-                            ->select()
-                            ->where(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids])
-                            ->count();
-        return $this->jsonResponse(['rows' => $data]);
-    }
-
     public function login()
     {
         if($this->request->is('post')) {
@@ -178,29 +109,6 @@ class UsersController extends AppController
             }
             
             return $this->jsonResponse($datum);
-        }
-    }
-    
-    public function sendEmail($userName, $fullName, $to, $token) {
-        try {
-            $activationUrl = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . "/users/activation/" . $token;
-            $subject = "Microblog Account Activation";
-
-            $email = new Email('gmail');
-            $email->setFrom([$to => 'Microblog 3'])
-                    ->setEmailFormat('html')
-                    ->setTo($to)
-                    ->setSubject($subject)
-                    ->setViewVars(['name' => $fullName, 
-                                   'email' => $to,
-                                   'username' => $userName, 
-                                   'url' => $activationUrl])
-                    ->viewBuilder()
-                    ->setLayout('activation')
-                    ->setTemplate('default');
-            return $email->send();
-        } catch (\Throwable $th) {
-            echo $th;
         }
     }
 
