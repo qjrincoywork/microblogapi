@@ -13,8 +13,8 @@
         echo $this->Form->control('content', array(
                                 'id' => 'content',
                                 'type' => 'text',
-                                'label' => false,
                                 'value' => $comment->content,
+                                'label' => false,
                                 'class' => 'mb-3 form-control ',
                                 'placeholder' => "Comment here..."
         ));

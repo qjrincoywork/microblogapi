@@ -43,6 +43,7 @@ class CommentsController extends AppController
             $datum['success'] = false;
             $request = JWT::decode($this->request->getData('token'),
                                    $this->request->getData('api_key'), ['HS256']);
+                                   
             $commentData = get_object_vars($request->data);
             $comment = $this->Comments->get($commentData['id']);
             $comment = $this->Comments->patchEntity($comment, $commentData);

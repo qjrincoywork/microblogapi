@@ -70,7 +70,7 @@ class CommentsController extends AppController
         }
         $this->set(compact('comment'));
     }
-
+    
     public function delete($id)
     {
         $comment = $this->Comments->get($id);
