@@ -80,13 +80,6 @@ class CommentsTable extends Table
     public function validationDelete(Validator $validator)
     {
         $validator
-            ->add('id', [
-                'isMine' => [
-                    'rule' => 'isMine',
-                    'provider' => 'table',
-                    'message' => __("Unable to process action.")
-                ]
-            ])
             ->integer('id')
             ->allowEmptyString('id', null, 'create');
 

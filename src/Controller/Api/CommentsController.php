@@ -43,7 +43,7 @@ class CommentsController extends AppController
             $datum['success'] = false;
             $request = JWT::decode($this->request->getData('token'),
                                    $this->request->getData('api_key'), ['HS256']);
-                                   
+
             $commentData = get_object_vars($request->data);
             $comment = $this->Comments->get($commentData['id']);
             $comment = $this->Comments->patchEntity($comment, $commentData);
@@ -55,6 +55,32 @@ class CommentsController extends AppController
             } else {
                 $errors = $this->formErrors($comment);
                 $datum['errors'] = $errors;
+            }
+            
+            return $this->jsonResponse($datum);
+        }
+    }
+    
+    public function delete()
+    {
+        if($this->request->is(['post'])) {
+            $datum['success'] = false;
+            
+            $request = JWT::decode($this->request->getData('token'),
+                                   $this->request->getData('api_key'), ['HS256']);
+            $commentData = get_object_vars($request->data);
+            $commentData['deleted'] = 1;
+            
+            $comment = $this->Comments->get($commentData['id']);
+            $comment = $this->Comments->patchEntity($comment, $commentData, ['validate' => 'Delete']);
+            
+            if($comment->getErrors()) {
+                $errors = $this->formErrors($comment);
+                $datum['errors'] = $errors;
+            } else {
+                if ($this->Comments->save($comment)) {
+                    $datum['success'] = true;
+                }
             }
             
             return $this->jsonResponse($datum);
