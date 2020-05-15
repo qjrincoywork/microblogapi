@@ -14,18 +14,14 @@
                                 'id' => 'content',
                                 'type' => 'text',
                                 'label' => false,
+                                'value' => $comment->content,
                                 'class' => 'mb-3 form-control ',
                                 'placeholder' => "Comment here..."
         ));
         
         echo $this->Form->hidden('id', [
+                                'value' => $comment->id,
                                 'id' => 'id'
-        ]);
-        
-        echo $this->Form->control('post_id', [
-            'label' => false,
-            'type' => 'hidden',
-            'id' => 'post_id'
         ]);
     ?>
     

@@ -36,4 +36,36 @@ class CommentsController extends AppController
             return $this->jsonResponse($datum);
         }
     }
+    
+    public function edit()
+    {
+        if ($this->request->is(['post'])) {
+            $datum['success'] = false;
+            $request = JWT::decode($this->request->getData('token'),
+                                   $this->request->getData('api_key'), ['HS256']);
+            $commentData = get_object_vars($request->data);
+            $comment = $this->Comments->get($commentData['id']);
+            $comment = $this->Comments->patchEntity($comment, $commentData);
+            
+            if(!$comment->getErrors()) {
+                if ($this->Comments->save($comment)) {
+                    $datum['success'] = true;
+                }
+            } else {
+                $errors = $this->formErrors($comment);
+                $datum['errors'] = $errors;
+            }
+            
+            return $this->jsonResponse($datum);
+        }
+    }
+    
+    public function userComment()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $id = $request->data;
+        $data = $this->Comments->get($id);
+        return $this->jsonResponse($data);
+    }
 }
