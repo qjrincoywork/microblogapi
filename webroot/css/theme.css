@@ -421,6 +421,9 @@ section {
         text-align: center;
         padding-top: 2em;
     }
+    .paging button{
+        color: #007bff;
+    }
 }
 
 /*Page Objects*/

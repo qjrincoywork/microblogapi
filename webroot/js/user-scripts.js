@@ -38,9 +38,51 @@ var fxUser = {
 
 $(function () {
     fxUser.UIHelper();
+    $('body').on('click', '.get_follow, .get_follow_bypage', function (event) {
+        event.preventDefault();
+        var id = $(this).attr('id'),
+            className = $(this).attr("class").split(" ")[0],
+            url = $(this).attr("href");
+
+        if(className == 'get_follow_bypage') {
+            setTimeout(function () {
+                $(this).closest("div.right-pane-backdrop").click();
+                $('.right-pane').addClass('hidden');
+            }, 50);
+            $(".right-pane div").html('');
+        }
+
+        posting = $.get(url);
+        posting.done(function (data) {
+            $(".right-pane div").replaceWith(data);
+        });
+
+        $(".modal").after(
+            "<div class='right-pane-backdrop'><div class='right-pane hidden'><div></div></div></div>"
+        );
+
+        setTimeout(function () {
+            $(".right-pane").removeClass("hidden");
+        }, 50);
+    });
+
+    $('body').on('click', '.right-pane-backdrop', function (event) {
+
+        if (event.target !== this) {
+            return;
+        }
+        
+        $('.right-pane').addClass('hidden');
+
+        setTimeout(function () {
+            $('.right-pane-backdrop').remove();
+        }, 200);
+
+    });
+
     $("body").on("click", ".post_content, .like_post, .comment_post, .edit_comment, .delete_comment, .restore_comment,"+
                           ".edit_post, .share_post, .delete_post, .restore_post,"+
-                          ".follow_user, .unfollow_user, .edit_profile, .get_follow," +
+                          ".follow_user, .unfollow_user, .edit_profile," +
                           ".update_picture, .change_password, .cancel_upload," + 
                           ".preview_image, .edit_preview_image", function (event) {
         event.preventDefault();
@@ -104,9 +146,6 @@ $(function () {
                 break;
             default:
                 if (action == undefined) {
-                    if(className != 'get_follow') {
-                        modal = true;
-                    }
                     posting = $.get(url);
                 } else {
                     form.find("input, file, select").each(function () {
@@ -116,7 +155,6 @@ $(function () {
                             fd.append($(this).attr("name"), $(this)[0].files[0]);
                         }
                     });
-                    
                     posting = $.ajax({
                         type: "post",
                         url: action,
@@ -156,9 +194,6 @@ $(function () {
                         case "follow_user":
                         case "unfollow_user":
                             $("#mainContent").load(location.href);
-                            break;
-                        case "get_follow":
-                            $("#profile-post-container").html(data);
                             break;
                         default:
                             $("#mainContent").load(location.href);
