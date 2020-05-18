@@ -144,20 +144,16 @@ class UsersController extends AppController
     
     public function edit() {
         $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($id);
-        if($this->request->is(['put', 'patch'])) {
+        $user = $this->apiGateWay('/api/users/profile.json', $id);
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
             $postData = $this->request->getData();
-            $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
-            
-            $user->user_id = $id;
-            if(!$user->getErrors()) {
-                if ($this->Users->save($user)) {
-                    $datum['success'] = true;
-                }
+            $postData['id'] = $id;
+            $result = $this->apiGateWay('/api/users/edit.json', $postData);
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
             } else {
-                $errors = $this->formErrors($user);
-                $datum['errors'] = $errors;
+                $datum = get_object_vars($result);
             }
             
             return $this->jsonResponse($datum);
