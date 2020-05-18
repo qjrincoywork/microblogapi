@@ -30,7 +30,7 @@
     
             $article .= "<div class='post-details col-sm-10'>
                             <div class='row'>";
-            $article .=         "<div class='post-user'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', $postUserId])."'>"
+            $article .=         "<div class='post-user'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', 'id' => $postUserId])."'>"
                                     .$postFullName.
                                 "</a></div>
                                 <div class='post-ago'>
@@ -61,7 +61,7 @@
         
                                 $sharePost .= "<div class='post-details col-sm-10'>
                                                     <div class='row'>
-                                                        <div class='post-user'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', $sharedPost->user_id])."'>"
+                                                        <div class='post-user'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', 'id' => $sharedPost->user_id])."'>"
                                                             .$sharedFullName.
                                                         "</a></div>
                                                         <div class='post-ago'>
