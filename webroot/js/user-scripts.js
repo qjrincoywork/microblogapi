@@ -72,7 +72,6 @@ $(function () {
                 break;
             case 'like_post':
                 fd.append("_method", "POST");
-                fd.append("_csrfToken", csrfToken);
                 
                 posting = $.ajax({
                     type: "post",
