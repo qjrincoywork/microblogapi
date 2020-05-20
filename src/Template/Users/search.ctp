@@ -13,7 +13,7 @@
                                     <img src='".$val->profile_image."'class='mx-auto'>
                                 </div>
                                 <div class='row col-sm-11'>
-                                    <div class='post-user col-sm-6 mt-3'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', $val->id])."'>
+                                    <div class='post-user col-sm-6 mt-3'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', 'id' =>  $val->id])."'>
                                     $fullname
                                     </a></div>";
                             if(!$me) {
