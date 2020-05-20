@@ -227,46 +227,25 @@ class UsersController extends AppController
         $this->set(compact('user'));
     }
     
-    public function follow($followingId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($followingId);
-        if($user) {
-            $exists = $this->Follows->find('all', [
-                                                'conditions' => [
-                                                    ['Follows.following_id' => $followingId], 
-                                                    ['Follows.user_id' => $id]
-                                                ]
-                                           ])->first();
-                                           
-            if(!$exists) {
-                $follow = $this->Follows->newEntity();
-                $follow->user_id = $id;
-                $follow->following_id = $followingId;
-                $result = $this->Follows->save($follow);
-            }
+    public function follow() {
+        $followingId = $this->request->getQuery('following_id');
+        if(!$followingId) {
+            throw new NotFoundException();
         }
-        $datum = ['success' => (isset($result)) ? true : false];
+        
+        $id = $this->request->getSession()->read('Auth.User.id');
+        $datum = $this->apiGateWay('/api/users/follow.json', ['user_id' => $id,'following_id' => $followingId]);
         return $this->jsonResponse($datum);
     }
 
-    public function unfollow($followingId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($followingId);
-        if($user) {
-            $exists = $this->Follows->find('all', [
-                                                'conditions' => [
-                                                    ['Follows.following_id' => $followingId], 
-                                                    ['Follows.user_id' => $id]
-                                                ]
-                                           ])->first();
-                                           
-            if($exists) {
-                $status = $exists->deleted ? 0 : 1;
-                $exists->deleted = $status;
-                $result = $this->Follows->save($exists);
-            }
+    public function unfollow() {
+        $followingId = $this->request->getQuery('following_id');
+        if(!$followingId) {
+            throw new NotFoundException();
         }
-        $datum = ['success' => (isset($result)) ? true : false];
+        
+        $id = $this->request->getSession()->read('Auth.User.id');
+        $datum = $this->apiGateWay('/api/users/unfollow.json', ['user_id' => $id,'following_id' => $followingId]);
         return $this->jsonResponse($datum);
     }
 }

@@ -37,7 +37,7 @@
                         $btnClass = $isFollowing ? 'unfollow_user btn-outline-danger' : 'follow_user btn-outline-primary';
                         
                         $button = "<div class='follow-button col-sm-12 mt-3'>
-                                        <button href='".$this->Url->build(['controller' => 'users', 'action' => $hrefAction, $userId])."' type='button' class='".$btnClass." btn-sm'>".$btnTitle."</button>
+                                        <button href='".$this->Url->build(['controller' => 'users', 'action' => $hrefAction, 'following_id' => $userId])."' type='button' class='".$btnClass." btn-sm'>".$btnTitle."</button>
                                     </div>";
                     }
                     echo $button;

@@ -193,7 +193,11 @@ $(function () {
                     switch (className) {
                         case "follow_user":
                         case "unfollow_user":
-                            $("#mainContent").load(location.href);
+                            setTimeout(function () {
+                                $('.right-pane').addClass('hidden');
+                                $('.right-pane-backdrop').remove();
+                            }, 50);
+                            // $("#mainContent").load(location.href);
                             break;
                         default:
                             $("#mainContent").load(location.href);

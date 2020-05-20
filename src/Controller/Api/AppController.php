@@ -93,4 +93,33 @@ class AppController extends Controller
         $hasReacted = ($data) ? true : false;
         return $hasReacted;
     }
+    
+    public function isFollowing($myId, $followingId) {
+        $follow = TableRegistry::get('Follows');
+        
+        $data = $follow->find('all', [
+                                'conditions' => [
+                                    ['Follows.user_id' => $myId],
+                                    ['Follows.following_id' => $followingId],
+                                    ['Follows.deleted' => 0]
+                                ]
+                            ])->first();
+                            
+        $isFollowing = (!empty($data)) ? true : false;
+        return $isFollowing;
+    }
+
+    public function hadFollowed($myId, $followingId) {
+        $follow = TableRegistry::get('Follows');
+
+        $data = $follow->find('all', [
+            'conditions' => [
+                ['Follows.user_id' => $myId],
+                ['Follows.following_id' => $followingId]
+            ]
+        ])->first();
+        
+        $hadFollowed = (!empty($data)) ? true : false;
+        return $hadFollowed;
+    }
 }
