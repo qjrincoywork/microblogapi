@@ -146,6 +146,7 @@ $(function () {
                 break;
             default:
                 if (action == undefined) {
+                    modal = true;
                     posting = $.get(url);
                 } else {
                     form.find("input, file, select").each(function () {
