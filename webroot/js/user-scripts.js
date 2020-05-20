@@ -43,41 +43,8 @@ $(function () {
         var id = $(this).attr('id'),
             className = $(this).attr("class").split(" ")[0],
             url = $(this).attr("href");
-
-        if(className == 'get_follow_bypage') {
-            setTimeout(function () {
-                $(this).closest("div.right-pane-backdrop").click();
-                $('.right-pane').addClass('hidden');
-            }, 50);
-            $(".right-pane div").html('');
-        }
-
-        posting = $.get(url);
-        posting.done(function (data) {
-            $(".right-pane div").replaceWith(data);
-        });
-
-        $(".modal").after(
-            "<div class='right-pane-backdrop'><div class='right-pane hidden'><div></div></div></div>"
-        );
-
-        setTimeout(function () {
-            $(".right-pane").removeClass("hidden");
-        }, 50);
-    });
-
-    $('body').on('click', '.right-pane-backdrop', function (event) {
-
-        if (event.target !== this) {
-            return;
-        }
-        
-        $('.right-pane').addClass('hidden');
-
-        setTimeout(function () {
-            $('.right-pane-backdrop').remove();
-        }, 200);
-
+            
+            window.location.href = url;
     });
 
     $("body").on("click", ".post_content, .like_post, .comment_post, .edit_comment, .delete_comment, .restore_comment,"+
@@ -194,11 +161,11 @@ $(function () {
                     switch (className) {
                         case "follow_user":
                         case "unfollow_user":
-                            setTimeout(function () {
-                                $('.right-pane').addClass('hidden');
-                                $('.right-pane-backdrop').remove();
-                            }, 50);
-                            // $("#mainContent").load(location.href);
+                            // setTimeout(function () {
+                            //     $('.right-pane').addClass('hidden');
+                            //     $('.right-pane-backdrop').remove();
+                            // }, 50);
+                            $("#mainContent").load(location.href);
                             break;
                         default:
                             $("#mainContent").load(location.href);

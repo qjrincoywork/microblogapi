@@ -155,9 +155,14 @@ class UsersController extends AppController
     }
 
     public function following() {
+        $this->set('title', 'User Follows');
         $field = key($this->request->getQuery());
         $id = $this->request->getQuery()[$field];
         $data = [];
+        $profile = $this->apiGateWay('/api/users/profile.json', $id);
+        if(!$profile) {
+            throw new NotFoundException();
+        }
         $conditions = ['Follows.'.$field => $id,'Follows.deleted' => 0];
         
         if($field == 'user_id') {
@@ -181,7 +186,7 @@ class UsersController extends AppController
             $data = $this->apiGetGateWay('/api/users/following.json', ['column' => $column, 'conditions' => $conditions]);
         }
         
-        $this->set(compact('message', 'data', 'pages', 'field', 'id'));
+        $this->set(compact('profile', 'message', 'data', 'pages', 'field', 'id'));
     }
 
     public function editPicture() {

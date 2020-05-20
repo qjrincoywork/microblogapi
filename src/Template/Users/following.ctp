@@ -1,3 +1,4 @@
+<?= $this->element('profile'); ?>
 <div class='container-following'>
 <?php
     if(!empty($data)) {
