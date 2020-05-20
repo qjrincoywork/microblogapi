@@ -137,6 +137,28 @@ class UsersController extends AppController
         return $this->jsonResponse(['rows' => $data]);
     }
 
+    public function searchCount()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $conditions = [];
+        if($request->data->user){
+            $cond = [];
+            $cond['first_name LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond['last_name LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond['email LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond['middle_name LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond['suffix LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond["CONCAT(first_name,' ',last_name) LIKE"] = "%" . trim($request->data->user) . "%";
+            $conditions['OR'] = $cond;
+        }
+        $data = $this->Users->find('all')
+                            ->select()
+                            ->where(['Users.is_online !=' => 2, 'Users.deleted' => 0, $conditions])
+                            ->count();
+        return $this->jsonResponse(['rows' => $data]);
+    }
+
     public function userCount()
     {
         $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
@@ -255,16 +277,17 @@ class UsersController extends AppController
         }
     }
 
-    public function search($user) {
+    public function search() {
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
         $conditions = [];
-        if($user){
+        if($request->data->user) {
             $cond = [];
-            $cond['first_name LIKE'] = "%" . trim($user) . "%";
-            $cond['last_name LIKE'] = "%" . trim($user) . "%";
-            $cond['email LIKE'] = "%" . trim($user) . "%";
-            $cond['middle_name LIKE'] = "%" . trim($user) . "%";
-            $cond['suffix LIKE'] = "%" . trim($user) . "%";
-            $cond["CONCAT(first_name,' ',last_name) LIKE"] = "%" . trim($user) . "%";
+            $cond['first_name LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond['last_name LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond['email LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond['middle_name LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond['suffix LIKE'] = "%" . trim($request->data->user) . "%";
+            $cond["CONCAT(first_name,' ',last_name) LIKE"] = "%" . trim($request->data->user) . "%";
             $conditions['OR'] = $cond;
         }
         $this->paginate = [
@@ -273,14 +296,13 @@ class UsersController extends AppController
                 ['deleted' => 0],
                 [$conditions],
             ],
-            'limit' => 5,
+            'limit' => 4,
             'order' => [
                 'created' => 'desc',
             ],
         ];
         $data = $this->paginate($this->Users);
-        
-        $this->set(compact('data'));
+        return $this->jsonResponse($data);
     }
     
     public function edit() {

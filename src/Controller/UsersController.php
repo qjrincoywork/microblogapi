@@ -114,32 +114,25 @@ class UsersController extends AppController
         $this->set(compact('data', 'profile', 'pages'));
     }
     
-    public function search($user) {
-        $conditions = [];
-        if($user){
-            $cond = [];
-            $cond['first_name LIKE'] = "%" . trim($user) . "%";
-            $cond['last_name LIKE'] = "%" . trim($user) . "%";
-            $cond['email LIKE'] = "%" . trim($user) . "%";
-            $cond['middle_name LIKE'] = "%" . trim($user) . "%";
-            $cond['suffix LIKE'] = "%" . trim($user) . "%";
-            $cond["CONCAT(first_name,' ',last_name) LIKE"] = "%" . trim($user) . "%";
-            $conditions['OR'] = $cond;
+    public function search() {
+        $this->set('title', 'Search User');
+        $searchedUser = $this->request->getQuery('user');
+        if(!$searchedUser) {
+            throw new NotFoundException();
         }
-        $this->paginate = [
-            'conditions' => [
-                ['is_online !=' => 2],
-                ['deleted' => 0],
-                [$conditions],
-            ],
-            'limit' => 5,
-            'order' => [
-                'created' => 'desc',
-            ],
-        ];
-        $data = $this->paginate($this->Users);
+        $searchColumn = $this->apiGateWay('/api/users/searchCount.json', ['user' => $searchedUser]);
+        $pages = 0;
+        if($searchColumn) {
+            $pages = ceil($searchColumn->rows / 4);
+        }
         
-        $this->set(compact('data'));
+        $page = $this->request->getQuery('page');
+        if($page <= $pages) {
+            $data = $this->apiGetGateWay("/api/users/search.json?page=".$page, ['user' => $searchedUser]);
+        } else {
+            $data = $this->apiGetGateWay("/api/users/search.json", ['user' => $searchedUser]);
+        }
+        $this->set(compact('data', 'pages', 'searchedUser'));
     }
     
     public function edit() {
@@ -203,38 +196,9 @@ class UsersController extends AppController
             if(isset($result->success) && $result->success) {
                 $datum['success'] = $result->success;
             } else {
-                pr($result); die('view');
                 $datum = get_object_vars($result);
             }
             return $this->jsonResponse($datum);
-            /* if($postData['image'] == 'undefined') {
-                $postData['image'] = null;
-                $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
-            } else {
-                $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
-                $uploadFolder = "img/".$id;
-                
-                if(!file_exists($uploadFolder)) {
-                    mkdir($uploadFolder);
-                }
-                
-                $path = $uploadFolder."/".$postData['image']['name'];
-                if(move_uploaded_file($postData['image']['tmp_name'], $path)) {
-                    $user->image = $path;
-                }
-            }
-            $user->user_id = $id;
-            
-            if(!$user->getErrors()) {
-                if ($this->Users->save($user)) {
-                    $datum['success'] = true;
-                }
-            } else {
-                $errors = $this->formErrors($user);
-                $datum['errors'] = $errors;
-            }
-            
-            return $this->jsonResponse($datum); */
         }
         $this->set(compact('user'));
     }
