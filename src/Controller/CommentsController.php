@@ -4,16 +4,8 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Event\Event;
 
-/**
- * Comments Controller
- *
- * @property \App\Model\Table\CommentsTable $Comments
- *
- * @method \App\Model\Entity\Comment[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
- */
 class CommentsController extends AppController
 {
-    
     public function initialize()
     {
         parent::initialize();
@@ -34,28 +26,22 @@ class CommentsController extends AppController
         $comment = $this->Comments->newEntity();
         if($this->request->is('post')) {
             $datum['success'] = false;
-            $id = $this->request->getSession()->read('Auth.User.id');
+            $userId = $this->request->getSession()->read('Auth.User.id');
             $postData = $this->request->getData();
-            $postData['user_id'] = $id;
-            $comment = $this->Comments->patchEntity($comment, $postData);
+            $postData['user_id'] = $userId;
+            $result = $this->apiGateWay('/api/comments/add.json', $postData);
             
-            if(!$comment->getErrors()) {
-                if ($this->Comments->save($comment)) {
-                    $datum['success'] = true;
-                }
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
             } else {
-                $errors = $this->formErrors($comment);
-                $datum['errors'] = $errors;
+                $datum = get_object_vars($result);
             }
             
             return $this->jsonResponse($datum);
         }
         
-        $data = $this->Posts->find('all', [
-                                        'contain' => ['Users'],
-                                        'conditions' => ['Posts.id' => $id]
-                                  ])->first();
-        
+        $post = $this->apiGateWay('/api/posts/userPost.json', $id);
+        $data = get_object_vars($post);
         $this->set(compact('data', 'comment'));
     }
     
