@@ -39,7 +39,7 @@ class UsersController extends AppController
     {
         $this->set('title', 'Home');
         $id = $this->request->getSession()->read('Auth.User.id');
-        $postColumn = $this->apiGateWay('/api/users/postCount.json', ['user_id' => $id]);
+        $postColumn = $this->apiGateWay('/api/users/postCount.json', ['id' => $id]);
         $pages = ceil($postColumn->rows / 4);
         $post = $this->Posts->newEntity();
         $page = $this->request->getQuery('page');
@@ -102,8 +102,7 @@ class UsersController extends AppController
         } else {
             $data = $this->apiGetGateWay('/api/users/profilePosts.json', ['user_id' => $myId, 'condition' => $condition]);
         }
-
-        $this->set(compact('data', 'profile', 'pages'));
+        $this->set(compact('id', 'data', 'profile', 'pages'));
     }
     
     public function search() {
