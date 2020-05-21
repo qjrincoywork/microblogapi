@@ -11,7 +11,7 @@
                     <a href="<?= $this->Url->build(['controller'=>'users', 'action'=>'home'])?>">
                         <i class="fas fa-home"></i> Home </a>
                 </li>
-                <li <?= $this->request->getAttribute("here") == "/users/profile?id=$myId" ? 'class="active"' : '' ?>>
+                <li <?= $this->request->here(false) == "/users/profile?id=$myId" ? 'class="active"' : '' ?>>
                     <a class="js-arrow" href="<?= $this->Url->build(['controller'=>'users',
                                                                     'action'=>'profile', 'id' => $myId])?>">
                         <i class="fas fa-address-card"></i> Profile </a>
