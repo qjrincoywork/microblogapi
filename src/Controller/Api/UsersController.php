@@ -196,14 +196,13 @@ class UsersController extends AppController
     }
     
     public function edit() {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($id);
-        if($this->request->is(['put', 'patch'])) {
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
-            $postData = $this->request->getData();
+            $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+            $postData = get_object_vars($request->data);
+            $user = $this->Users->get($postData['id']);
             $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
             
-            $user->user_id = $id;
             if(!$user->getErrors()) {
                 if ($this->Users->save($user)) {
                     $datum['success'] = true;
@@ -215,7 +214,6 @@ class UsersController extends AppController
             
             return $this->jsonResponse($datum);
         }
-        $this->set(compact('user'));
     }
 
     public function following() {
