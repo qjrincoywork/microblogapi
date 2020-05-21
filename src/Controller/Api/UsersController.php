@@ -287,7 +287,9 @@ class UsersController extends AppController
     }
 
     public function changePassword() {
-        $id = $this->request->getSession()->read('Auth.User.id');
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        
+        $postData = get_object_vars($request->data);
         $user = $this->Users->get($id);
         
         if($this->request->is(['put', 'patch'])) {
@@ -310,21 +312,21 @@ class UsersController extends AppController
         $this->set(compact('user'));
     }
     
-    public function follow($followingId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($followingId);
+    public function follow() {
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        $user = $this->Users->get($request->data->following_id);
         if($user) {
             $exists = $this->Follows->find('all', [
                                                 'conditions' => [
-                                                    ['Follows.following_id' => $followingId], 
-                                                    ['Follows.user_id' => $id]
+                                                    ['Follows.following_id' => $request->data->following_id], 
+                                                    ['Follows.user_id' => $request->data->user_id]
                                                 ]
                                            ])->first();
                                            
             if(!$exists) {
                 $follow = $this->Follows->newEntity();
-                $follow->user_id = $id;
-                $follow->following_id = $followingId;
+                $follow->user_id = $request->data->user_id;
+                $follow->following_id = $request->data->following_id;
                 $result = $this->Follows->save($follow);
             }
         }
@@ -332,14 +334,15 @@ class UsersController extends AppController
         return $this->jsonResponse($datum);
     }
 
-    public function unfollow($followingId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($followingId);
+    public function unfollow() {
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        $user = $this->Users->get($request->data->following_id);
+        
         if($user) {
             $exists = $this->Follows->find('all', [
                                                 'conditions' => [
-                                                    ['Follows.following_id' => $followingId], 
-                                                    ['Follows.user_id' => $id]
+                                                    ['Follows.following_id' => $request->data->following_id], 
+                                                    ['Follows.user_id' => $request->data->user_id]
                                                 ]
                                            ])->first();
                                            
