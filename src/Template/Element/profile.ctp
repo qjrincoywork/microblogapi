@@ -32,7 +32,7 @@
                     } else {
                         $isFollowing = $this->System->isFollowing($id, $userId);
                         $hadFollowed = $this->System->hadFollowed($id, $userId);
-                        $hrefAction = $hadFollowed ? 'unfollow' : 'follow';
+                        $hrefAction = $profile->had_followed ? 'unfollow' : 'follow';
                         $btnTitle = $isFollowing ? 'Unfollow' : 'Follow';
                         $btnClass = $isFollowing ? 'unfollow_user btn-outline-danger' : 'follow_user btn-outline-primary';
                         

@@ -63,6 +63,36 @@ class UsersController extends AppController
             $ids[] = $val['following_id'];
         }
         $ids[] = $id;
+        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
+        return $this->jsonResponse($data);
+    }
+    
+    public function profile()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+                               
+        if(is_object($request->data)) {
+            $profile = $this->Users->find('all', [
+                                            'conditions' => ['Users.id' => $request->data->id, 'Users.is_online !=' => 2]
+                                         ])->first();
+            $profile->is_following = $this->isFollowing($request->data->user_id, $profile->id);
+            $profile->had_followed = $this->hadFollowed($request->data->user_id, $profile->id);
+        } else {
+            $profile = $this->Users->find('all', [
+                'conditions' => ['Users.id' => $request->data, 'Users.is_online !=' => 2]
+             ])->first();
+        }
+        return $this->jsonResponse($profile);
+    }
+    
+    public function profilePosts()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $condition = get_object_vars($request->data->condition);
+        $id = $request->data->user_id;
+        $posts = $this->getPosts($condition);
         $posts = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
         $data = [];
         foreach ($posts as $post) {
@@ -191,7 +221,13 @@ class UsersController extends AppController
                 'created' => 'desc',
             ],
         ];
-        $data = $this->paginate($this->Users);
+        $users = $this->paginate($this->Users);
+        $data = [];
+        foreach($users as $user) {
+            $user->is_following = $this->isFollowing($request->data->id, $user->id);
+            $user->had_followed = $this->hadFollowed($request->data->id, $user->id);
+            $data[] = $user;
+        }
         return $this->jsonResponse($data);
     }
     
@@ -238,9 +274,14 @@ class UsersController extends AppController
                     ],
                 ]
             ];
-            $data = $this->paginate();
+            $users = $this->paginate();
+            $data = [];
+            foreach($users as $user) {
+                $user->is_following = $this->isFollowing($postData['id'], $user->id);
+                $user->had_followed = $this->hadFollowed($postData['id'], $user->id);
+                $data[] = $user;
+            }
         }
-        
         return $this->jsonResponse($data);
     }
 

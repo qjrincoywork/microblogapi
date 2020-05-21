@@ -89,12 +89,12 @@ class UsersController extends AppController
         }
         
         $id = $this->request->getQuery('id');
-        $profile = $this->apiGateWay('/api/users/profile.json', $id);
+        $myId = $this->request->getSession()->read('Auth.User.id');
+        $profile = $this->apiGateWay('/api/users/profile.json', ['user_id' => $myId, 'id' => $id]);
         if(!$profile) {
             throw new NotFoundException();
         }
         
-        $myId = $this->request->getSession()->read('Auth.User.id');
         if($myId != $id) {
             $condition = ['Posts.user_id' => $id, 'Posts.deleted' => 0];
         } else {
@@ -116,6 +116,7 @@ class UsersController extends AppController
     
     public function search() {
         $this->set('title', 'Search User');
+        $myId = $this->request->getSession()->read('Auth.User.id');
         $searchedUser = $this->request->getQuery('user');
         if(!$searchedUser) {
             throw new NotFoundException();
@@ -128,9 +129,9 @@ class UsersController extends AppController
         
         $page = $this->request->getQuery('page');
         if($page <= $pages) {
-            $data = $this->apiGetGateWay("/api/users/search.json?page=".$page, ['user' => $searchedUser]);
+            $data = $this->apiGetGateWay("/api/users/search.json?page=".$page, ['id' => $myId, 'user' => $searchedUser]);
         } else {
-            $data = $this->apiGetGateWay("/api/users/search.json", ['user' => $searchedUser]);
+            $data = $this->apiGetGateWay("/api/users/search.json", ['id' => $myId, 'user' => $searchedUser]);
         }
         $this->set(compact('data', 'pages', 'searchedUser'));
     }
@@ -157,9 +158,10 @@ class UsersController extends AppController
     public function following() {
         $this->set('title', 'User Follows');
         $field = key($this->request->getQuery());
+        $myId = $this->request->getSession()->read('Auth.User.id');
         $id = $this->request->getQuery()[$field];
         $data = [];
-        $profile = $this->apiGateWay('/api/users/profile.json', $id);
+        $profile = $this->apiGateWay('/api/users/profile.json', ['id' => $id, 'user_id' => $myId]);
         if(!$profile) {
             throw new NotFoundException();
         }
@@ -181,11 +183,11 @@ class UsersController extends AppController
         $page = $this->request->getQuery('page');
         
         if($page <= $pages) {
-            $data = $this->apiGetGateWay("/api/users/following.json?page=".$page, ['column' => $column, 'conditions' => $conditions]);
+            $data = $this->apiGetGateWay("/api/users/following.json?page=".$page, ['id' => $myId, 'column' => $column, 'conditions' => $conditions]);
         } else {
-            $data = $this->apiGetGateWay('/api/users/following.json', ['column' => $column, 'conditions' => $conditions]);
+            $data = $this->apiGetGateWay('/api/users/following.json', ['id' => $myId, 'column' => $column, 'conditions' => $conditions]);
         }
-        
+
         $this->set(compact('profile', 'message', 'data', 'pages', 'field', 'id'));
     }
 

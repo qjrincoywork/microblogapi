@@ -5,7 +5,6 @@
         $user = "<div class='container pt-4'>";
         foreach ($data as $following) {
             $fullname = $following->full_name;
-            $profilePic = $this->System->getUserPic($following->id);
             $joined = $following->joined;
             $me = $myId === $following->id ? true : false;
             
@@ -13,19 +12,16 @@
 
             $user .= "<div class='row'>";
             $user .=         "<div class='p-0 m-2 col-sm-1'>
-                                    <img src='".$profilePic."'class='mx-auto'>
+                                    <img src='".$following->profile_image."'class='mx-auto'>
                                 </div>
                                 <div class='row col-sm-11'>
                                     <div class='post-user col-sm-6 mt-3'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', $following->id])."'>
                                     $fullname
                                     </a></div>";
                         if(!$me){
-                            $isFollowing = $this->System->isFollowing($myId, $following->id);
-                            $hadFollowed = $this->System->hadFollowed($myId, $following->id);
-                            $hrefAction = $hadFollowed ? 'unfollow' : 'follow';
-
-                            $btnTitle = $isFollowing ? 'Unfollow' : 'Follow';
-                            $btnClass = $isFollowing ? 'unfollow_user btn-danger' : 'follow_user btn-primary';
+                            $hrefAction = $following->had_followed ? 'unfollow' : 'follow';
+                            $btnTitle = $following->is_following ? 'Unfollow' : 'Follow';
+                            $btnClass = $following->is_following ? 'unfollow_user btn-danger' : 'follow_user btn-primary';
             $user .=  "<div id='buttons-container' class='follow-button col-sm-5 mt-3'>
                             <button href='".$this->Url->build(['controller' => 'users', 'action' => $hrefAction, 'following_id' => $following->id])."' type='button' class='".$btnClass." btn-sm'>".$btnTitle."</button>
                         </div>";
