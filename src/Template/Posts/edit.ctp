@@ -18,17 +18,19 @@
 <div class="container mt-3">
     <?= $this->Form->create($post); ?>
     <?php
+        echo $this->Form->hidden('id', [
+                                'value' => $post->id,
+                                'id' => 'id'
+        ]);
+        
         echo $this->Form->control('content', array(
                                 'id' => 'content',
                                 'type' => 'text',
                                 'label' => false,
                                 'class' => 'mb-3 form-control ',
+                                'value' => $content,
                                 'placeholder' => "Edit Content..."
         ));
-        
-        echo $this->Form->hidden('id', [
-                                'id' => 'id'
-        ]);
     ?>
     
     <?= $this->Form->control('image',

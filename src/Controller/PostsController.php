@@ -87,44 +87,22 @@ class PostsController extends AppController
     
     public function edit($id)
     {
-        $post = $this->Posts->get($id, [
-            'contain' => ['Users'],
-        ]);
-        if ($this->request->is(['put', 'patch'])) {
-            $postData = $this->request->getData();
-            $datum['success'] = false;
-            $id = $this->request->getSession()->read('Auth.User.id');
-            
-            if($postData['image'] == 'undefined') {
-                unset($postData['image']);
-                $post = $this->Posts->patchEntity($post, $postData);
-            } else {
-                $post = $this->Posts->patchEntity($post, $postData);
-                $uploadFolder = "img/".$id;
-                
-                if(!file_exists($uploadFolder)) {
-                    mkdir($uploadFolder);
-                }
-
-                $path = $uploadFolder."/".$postData['image']['name'];
-                
-                if(move_uploaded_file($postData['image']['tmp_name'], $path)) {
-                        $post->image = $path;
-                }
+        $post = $this->apiGateWay('/api/posts/userPost.json', $id);
+        if ($this->request->is(['post'])) {
+            $userId = $this->request->getSession()->read('Auth.User.id');
+            if($post->user_id != $userId) {
+                $datum['error'] = 'Unable to process action.';
+                return $this->jsonResponse($datum);
             }
-            $post->user_id = $id;
-
-            if($post->getErrors()) {
-                if(array_key_exists('id', $post->getErrors())) {
-                    $datum['error'] = $post->getError('id.isMine');
-                } else {
-                    $errors = $this->formErrors($post);
-                    $datum['errors'] = $errors;
-                }
+            
+            $postData = $this->request->getData();
+            $postData['user_id'] = $userId;
+            $result = $this->apiGateWay('/api/posts/edit.json', $postData);
+            
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
             } else {
-                if ($this->Posts->save($post)) {
-                    $datum['success'] = true;
-                }
+                $datum = get_object_vars($result);
             }
             
             return $this->jsonResponse($datum);

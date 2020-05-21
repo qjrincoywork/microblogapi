@@ -71,20 +71,13 @@ class PostsTable extends Table
     public function validationDefault(Validator $validator)
     {
         $validator
-            ->add('id', [
-                'isMine' => [
-                    'rule' => 'isMine',
-                    'provider' => 'table',
-                    'message' => __("Unable to process action.")
-                ]
-            ])
             ->integer('id')
             ->allowEmptyString('id', null, 'create');
 
         $validator
             ->scalar('content')
             ->requirePresence('content', 'create')
-            ->maxLength('content', 140)
+            ->maxLength('content', 140, "The maximum character is 140")
             ->notEmptyString('content', 'This field is required.');
 
         $validator
@@ -120,20 +113,6 @@ class PostsTable extends Table
         $rules->add($rules->existsIn(['post_id'], 'Posts'));
 
         return $rules;
-    }
-
-    public function isMine($value, $context) {
-        $session = new Session();
-        $userId = $session->read('Auth.User.id');
-        $data = $this->find('all', [
-            'conditions' => ['Posts.id' => $context['data']['id'], 'Posts.user_id' => $userId]
-        ])->first();
-        
-        if($data) {
-            return true;
-        }
-        
-        return false;
     }
     
     public function imageType($value, $context)

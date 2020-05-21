@@ -62,6 +62,49 @@ class PostsController extends AppController
         }
     }
     
+    public function edit()
+    {
+        if ($this->request->is(['post'])) {
+            $datum['success'] = false;
+            $request = JWT::decode($this->request->getData('token'), 
+                                   $this->request->getData('api_key'), ['HS256']);
+            $postData = get_object_vars($request->data);
+            if($postData['image'] != 'undefined') {
+                $postData['image'] = get_object_vars($postData['image']);
+            }
+            $post = $this->Posts->get($postData['id']);
+            
+            if($postData['image'] == 'undefined') {
+                unset($postData['image']);
+                $post = $this->Posts->patchEntity($post, $postData);
+            } else {
+                $post = $this->Posts->patchEntity($post, $postData);
+                $uploadFolder = "img/".$postData['user_id'];
+                
+                if(!file_exists($uploadFolder)) {
+                    mkdir($uploadFolder);
+                }
+
+                $path = $uploadFolder."/".$postData['image']['name'];
+                
+                if(copy($postData['image']['tmp_name'], $path)) {
+                    $post->image = $path;
+                }
+            }
+            
+            if($post->getErrors()) {
+                $errors = $this->formErrors($post);
+                $datum['errors'] = $errors;
+            } else {
+                if ($this->Posts->save($post)) {
+                    $datum['success'] = true;
+                }
+            }
+            
+            return $this->jsonResponse($datum);
+        }
+    }
+    
     public function share() {
         $post = $this->Posts->newEntity();
         $datum['success'] = false;
