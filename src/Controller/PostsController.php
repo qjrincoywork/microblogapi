@@ -64,6 +64,27 @@ class PostsController extends AppController
         }
     }
     
+    public function share($id) {
+        $post = $this->Posts->newEntity();
+        $datum['success'] = false;
+        if($this->request->is('post')) {
+            $userId = $this->request->getSession()->read('Auth.User.id');
+            $postData = $this->request->getData();
+            $postData['user_id'] = $userId;
+            $result = $this->apiGateWay('/api/posts/share.json', $postData);
+            
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
+            } else {
+                $datum = get_object_vars($result);
+            }
+            
+            return $this->jsonResponse($datum);
+        }
+        $data = $this->apiGateWay('/api/posts/userPost.json', $id);
+        $this->set(compact('data', 'post'));
+    }
+    
     public function edit($id)
     {
         $post = $this->Posts->get($id, [
@@ -109,33 +130,6 @@ class PostsController extends AppController
             return $this->jsonResponse($datum);
         }
         $this->set(compact('post'));
-    }
-    
-    public function share($id) {
-        $post = $this->Posts->newEntity();
-        $datum['success'] = false;
-        if($this->request->is('post')) {
-            $userId = $this->request->getSession()->read('Auth.User.id');
-            $postData = $this->request->getData();
-            
-            $post = $this->Posts->patchEntity($post, $postData);
-            $post->user_id = $userId;
-            
-            if(!$post->getErrors()) {
-                if ($this->Posts->save($post)) {
-                    $datum['success'] = true;
-                }
-            } else {
-                $errors = $this->formErrors($post);
-                $datum['errors'] = $errors;
-            }
-            
-            return $this->jsonResponse($datum);
-        }
-        $data = $this->Posts->get($id, [
-            'contain' => ['Users'],
-        ]);
-        $this->set(compact('data', 'post'));
     }
 
     public function delete($id)

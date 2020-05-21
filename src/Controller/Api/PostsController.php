@@ -62,6 +62,28 @@ class PostsController extends AppController
         }
     }
     
+    public function share() {
+        $post = $this->Posts->newEntity();
+        $datum['success'] = false;
+        if($this->request->is('post')) {
+            $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+            $postData = get_object_vars($request->data);
+            $post = $this->Posts->patchEntity($post, $postData);
+            
+            if(!$post->getErrors()) {
+                if ($this->Posts->save($post)) {
+                    $datum['success'] = true;
+                }
+            } else {
+                $errors = $this->formErrors($post);
+                $datum['errors'] = $errors;
+            }
+            
+            return $this->jsonResponse($datum);
+        }
+    }
+    
     public function view()
     {
         $request = JWT::decode($this->request->getData('token'), 
@@ -99,5 +121,16 @@ class PostsController extends AppController
                                ->where(['Comments.deleted' => 0, 'Comments.post_id' => $id])
                                ->count();
         return $this->jsonResponse(['rows' => $data]);
+    }
+    
+    public function userPost()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $id = $request->data;
+        $data = $this->Posts->get($id, [
+            'contain' => ['Users'],
+        ]);
+        return $this->jsonResponse($data);
     }
 }
