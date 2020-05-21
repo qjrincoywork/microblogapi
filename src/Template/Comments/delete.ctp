@@ -7,6 +7,7 @@
     echo $this->Form->control('id', array(
                             'label' => false,
                             'type' => 'hidden',
+                            'value' => $comment->id,
                             'id' => 'id'
     ));
 ?>

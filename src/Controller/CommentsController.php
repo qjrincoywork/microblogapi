@@ -55,7 +55,7 @@ class CommentsController extends AppController
                 $datum['error'] = 'Unable to process action.';
                 return $this->jsonResponse($datum);
             }
-
+            
             $postData = $this->request->getData();
             $postData['user_id'] = $userId;
             $result = $this->apiGateWay('/api/comments/edit.json', $postData);
@@ -73,29 +73,23 @@ class CommentsController extends AppController
     
     public function delete($id)
     {
-        $comment = $this->Comments->get($id);
-        
-        if($this->request->is(['put', 'patch'])) {
+        $comment = $this->apiGateWay('/api/comments/userComment.json', $id);
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
-            
-            $id = $this->request->getSession()->read('Auth.User.id');
+            $userId = $this->request->getSession()->read('Auth.User.id');
+            if($comment->user_id != $userId) {
+                $datum['error'] = 'Unable to process action.';
+                return $this->jsonResponse($datum);
+            }
             $postData = $this->request->getData();
-            $postData['deleted'] = 1;
-            $postData['user_id'] = $id;
+            $postData['user_id'] = $userId;
             
-            $comment = $this->Comments->patchEntity($comment, $postData, ['validate' => 'Delete']);
+            $result = $this->apiGateWay('/api/comments/delete.json', $postData);
             
-            if($comment->getErrors()) {
-                if(array_key_exists('id', $comment->getErrors())) {
-                    $datum['error'] = $comment->getError('id.isMine');
-                } else {
-                    $errors = $this->formErrors($comment);
-                    $datum['errors'] = $errors;
-                }
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
             } else {
-                if ($this->Comments->save($comment)) {
-                    $datum['success'] = true;
-                }
+                $datum = get_object_vars($result);
             }
             
             return $this->jsonResponse($datum);
