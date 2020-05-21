@@ -329,13 +329,11 @@ class UsersController extends AppController
 
     public function changePassword() {
         $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
-        
         $postData = get_object_vars($request->data);
-        $user = $this->Users->get($id);
         
-        if($this->request->is(['put', 'patch'])) {
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
-            $postData = $this->request->getData();
+            $user = $this->Users->get($postData['id']);
             $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Passwords']);
             
             if(!$user->getErrors()) {
@@ -349,8 +347,6 @@ class UsersController extends AppController
             
             return $this->jsonResponse($datum);
         }
-        unset($user['password']);
-        $this->set(compact('user'));
     }
     
     public function follow() {

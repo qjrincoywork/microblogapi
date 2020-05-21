@@ -211,26 +211,21 @@ class UsersController extends AppController
     }
 
     public function changePassword() {
+        $this->set('title', 'User change password');
         $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($id);
-        
-        if($this->request->is(['put', 'patch'])) {
+        $user = $this->apiGateWay('/api/users/profile.json', $id);
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
             $postData = $this->request->getData();
-            $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Passwords']);
-            
-            if(!$user->getErrors()) {
-                if ($this->Users->save($user)) {
-                    $datum['success'] = true;
-                }
+            $postData['id'] = $id;
+            $result = $this->apiGateWay('/api/users/changePassword.json', $postData);
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
             } else {
-                $errors = $this->formErrors($user);
-                $datum['errors'] = $errors;
+                $datum = get_object_vars($result);
             }
-            
             return $this->jsonResponse($datum);
         }
-        unset($user['password']);
         $this->set(compact('user'));
     }
     
