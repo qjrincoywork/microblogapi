@@ -63,21 +63,13 @@ class UsersController extends AppController
             throw new NotFoundException();
             $this->Flash->error(__('Invalid token'));
         }
-        $user = $this->Users->find('all', ['conditions' => ['Users.token' => $token]])->first();
-        
-        if(!$user) {
-            throw new NotFoundException();
-            $this->Flash->error(__('Invalid token!'));
-        }
-        
-        if(isset($user['is_online']) && $user['is_online'] == 2) {
-            $user->set(['is_online' => 0]);
-            $this->Users->save($user);
+        $result = $this->apiGateWay('/api/users/activation.json', $token);
+        if(isset($result->success) && $result->success) {
             $this->Flash->success(__('Account successfully verified!, You can now login'));
-            $this->redirect(['controller' => 'users', 'action' => 'login']);
+            $this->redirect('/');
         } else {
-            $this->Flash->error(__('Account was already verified!'));
-            $this->redirect(['controller' => 'users', 'action' => 'login']);
+            $this->Flash->error(__($result->error));
+            $this->redirect('/');
         }
     }
     
