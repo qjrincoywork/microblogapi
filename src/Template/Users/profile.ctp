@@ -130,13 +130,13 @@
                 }
                 $pagination = "<nav class='paging'>";
                     if($page > 1) {
-                        $pagination .= "<a class='fa fa-fast-backward pl-3' title='first' href='?page=1'></a>";
-                        $pagination .= "<a class='fa fa-arrow-left pl-3' title='previous' href='?page=".($page - 1)."'></a>";
+                        $pagination .= "<a class='fa fa-fast-backward pl-3' title='first' href='?id=".$id."&page=1'></a>";
+                        $pagination .= "<a class='fa fa-arrow-left pl-3' title='previous' href='?id=".$id."&page=".($page - 1)."'></a>";
                     }
                     
                     if($page < $pages) {
-                        $pagination .="<a class='fa fa-arrow-right pl-3' title='next' href='?page=".($page + 1)."'></a>
-                                        <a class='fa fa-fast-forward pl-3' title='last' href='?page=". $pages ."'></a>";
+                        $pagination .="<a class='fa fa-arrow-right pl-3' title='next' href='?id=".$id."&page=".($page + 1)."'></a>
+                                        <a class='fa fa-fast-forward pl-3' title='last' href='?id=".$id."&page=". $pages ."'></a>";
                     }
                     $pagination .= "</nav>";
                 echo $pagination;
