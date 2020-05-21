@@ -21,41 +21,31 @@ class LikesController extends AppController
     }
     
     public function add($postId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
+        $userId = $this->request->getSession()->read('Auth.User.id');
+        $postData['post_id'] = $postId;
+        $postData['user_id'] = $userId;
+        $result = $this->apiGateWay('/api/likes/add.json', $postData);
         
-        $exists = $this->Likes->find('all', [
-                                        'conditions' => [
-                                            ['Likes.post_id' => $postId],
-                                            ['Likes.user_id' => $id]
-                                        ]
-                                    ])->first();
-                  
-        if(!$exists) {
-            $like = $this->Likes->newEntity();
-            $like->post_id = $postId;
-            $like->user_id = $id;
-            $result = $this->Likes->save($like);
+        if(isset($result->success) && $result->success) {
+            $datum['success'] = $result->success;
+        } else {
+            $datum = get_object_vars($result);
         }
-        $datum = ['success' => (isset($result)) ? true : false];
+        
         return $this->jsonResponse($datum);
     }
     
     public function delete($postId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
+        $userId = $this->request->getSession()->read('Auth.User.id');
+        $postData['post_id'] = $postId;
+        $postData['user_id'] = $userId;
+        $result = $this->apiGateWay('/api/likes/delete.json', $postData);
         
-        $exists = $this->Likes->find('all', [
-                                        'conditions' => [
-                                            ['Likes.post_id' => $postId],
-                                            ['Likes.user_id' => $id]
-                                        ]
-                                    ])->first();
-                  
-        if($exists) {
-            $status = $exists->deleted ? 0 : 1;
-            $exists->deleted = $status;
-            $result = $this->Likes->save($exists);
+        if(isset($result->success) && $result->success) {
+            $datum['success'] = $result->success;
+        } else {
+            $datum = get_object_vars($result);
         }
-        $datum = ['success' => (isset($result)) ? true : false];
         return $this->jsonResponse($datum);
     }
 }
