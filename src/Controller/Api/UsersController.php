@@ -174,26 +174,24 @@ class UsersController extends AppController
         }
     }
 
-    public function activation($token) {
-        if(!$token) {
-            throw new NotFoundException();
-            $this->Flash->error(__('Invalid token'));
-        }
-        $user = $this->Users->find('all', ['conditions' => ['Users.token' => $token]])->first();
-        
-        if(!$user) {
-            throw new NotFoundException();
-            $this->Flash->error(__('Invalid token!'));
-        }
-        
-        if(isset($user['is_online']) && $user['is_online'] == 2) {
-            $user->set(['is_online' => 0]);
-            $this->Users->save($user);
-            $this->Flash->success(__('Account successfully verified!, You can now login'));
-            $this->redirect(['controller' => 'users', 'action' => 'login']);
-        } else {
-            $this->Flash->error(__('Account was already verified!'));
-            $this->redirect(['controller' => 'users', 'action' => 'login']);
+    public function activation() {
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        if ($this->request->is('post')) {
+            $user = $this->Users->find('all', ['conditions' => ['Users.token' => $request->data]])->first();
+            
+            if(!$user) {
+                $datum['error'] = 'Invalid token!';
+            }
+            
+            if($user->is_online == 2) {
+                $user->set(['is_online' => 0]);
+                if($this->Users->save($user)) {
+                    $datum['success'] = true;
+                }
+            } else {
+                $datum['error'] = 'Account was already verified!';
+            }
+            return $this->jsonResponse($datum);
         }
     }
 
