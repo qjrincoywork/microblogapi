@@ -301,8 +301,6 @@ $(function () {
     $('#search').on('keypress',function(e) {
         if(e.which == 13) {
             var value = $(this).val(),
-                csrfToken = $('meta[name="csrf-token"]').attr('content'),
-                fd = new FormData(),
                 url = $(this).attr("href");
             if(!value) {
                 fx.displayNotify(
@@ -311,24 +309,7 @@ $(function () {
                     "danger"
                 );
             } else {
-                fd.append("_method", "GET");
-                fd.append("_csrfToken", csrfToken);
-                
-                posting = $.ajax({
-                    type: "post",
-                    url: url + '/' + value,
-                    data: fd,
-                    headers: {
-                        "X-CSRF-Token": csrfToken
-                    },
-                    cache: false,
-                    processData: false,
-                    contentType: false
-                });
-                
-                posting.done(function (data) {
-                    $("#mainContent").html(data);
-                })
+                window.location.href = url + '?user=' + value;
             }
         }
     });
