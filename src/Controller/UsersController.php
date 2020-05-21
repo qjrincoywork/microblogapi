@@ -63,21 +63,13 @@ class UsersController extends AppController
             throw new NotFoundException();
             $this->Flash->error(__('Invalid token'));
         }
-        $user = $this->Users->find('all', ['conditions' => ['Users.token' => $token]])->first();
-        
-        if(!$user) {
-            throw new NotFoundException();
-            $this->Flash->error(__('Invalid token!'));
-        }
-        
-        if(isset($user['is_online']) && $user['is_online'] == 2) {
-            $user->set(['is_online' => 0]);
-            $this->Users->save($user);
+        $result = $this->apiGateWay('/api/users/activation.json', $token);
+        if(isset($result->success) && $result->success) {
             $this->Flash->success(__('Account successfully verified!, You can now login'));
-            $this->redirect(['controller' => 'users', 'action' => 'login']);
+            $this->redirect('/');
         } else {
-            $this->Flash->error(__('Account was already verified!'));
-            $this->redirect(['controller' => 'users', 'action' => 'login']);
+            $this->Flash->error(__($result->error));
+            $this->redirect('/');
         }
     }
     
@@ -89,12 +81,12 @@ class UsersController extends AppController
         }
         
         $id = $this->request->getQuery('id');
-        $profile = $this->apiGateWay('/api/users/profile.json', $id);
+        $myId = $this->request->getSession()->read('Auth.User.id');
+        $profile = $this->apiGateWay('/api/users/profile.json', ['user_id' => $myId, 'id' => $id]);
         if(!$profile) {
             throw new NotFoundException();
         }
         
-        $myId = $this->request->getSession()->read('Auth.User.id');
         if($myId != $id) {
             $condition = ['Posts.user_id' => $id, 'Posts.deleted' => 0];
         } else {
@@ -116,6 +108,7 @@ class UsersController extends AppController
     
     public function search() {
         $this->set('title', 'Search User');
+        $myId = $this->request->getSession()->read('Auth.User.id');
         $searchedUser = $this->request->getQuery('user');
         if(!$searchedUser) {
             throw new NotFoundException();
@@ -128,9 +121,9 @@ class UsersController extends AppController
         
         $page = $this->request->getQuery('page');
         if($page <= $pages) {
-            $data = $this->apiGetGateWay("/api/users/search.json?page=".$page, ['user' => $searchedUser]);
+            $data = $this->apiGetGateWay("/api/users/search.json?page=".$page, ['id' => $myId, 'user' => $searchedUser]);
         } else {
-            $data = $this->apiGetGateWay("/api/users/search.json", ['user' => $searchedUser]);
+            $data = $this->apiGetGateWay("/api/users/search.json", ['id' => $myId, 'user' => $searchedUser]);
         }
         $this->set(compact('data', 'pages', 'searchedUser'));
     }
@@ -155,9 +148,15 @@ class UsersController extends AppController
     }
 
     public function following() {
+        $this->set('title', 'User Follows');
         $field = key($this->request->getQuery());
+        $myId = $this->request->getSession()->read('Auth.User.id');
         $id = $this->request->getQuery()[$field];
         $data = [];
+        $profile = $this->apiGateWay('/api/users/profile.json', ['id' => $id, 'user_id' => $myId]);
+        if(!$profile) {
+            throw new NotFoundException();
+        }
         $conditions = ['Follows.'.$field => $id,'Follows.deleted' => 0];
         
         if($field == 'user_id') {
@@ -176,12 +175,12 @@ class UsersController extends AppController
         $page = $this->request->getQuery('page');
         
         if($page <= $pages) {
-            $data = $this->apiGetGateWay("/api/users/following.json?page=".$page, ['column' => $column, 'conditions' => $conditions]);
+            $data = $this->apiGetGateWay("/api/users/following.json?page=".$page, ['id' => $myId, 'column' => $column, 'conditions' => $conditions]);
         } else {
-            $data = $this->apiGetGateWay('/api/users/following.json', ['column' => $column, 'conditions' => $conditions]);
+            $data = $this->apiGetGateWay('/api/users/following.json', ['id' => $myId, 'column' => $column, 'conditions' => $conditions]);
         }
-        
-        $this->set(compact('message', 'data', 'pages', 'field', 'id'));
+
+        $this->set(compact('profile', 'message', 'data', 'pages', 'field', 'id'));
     }
 
     public function editPicture() {
@@ -204,69 +203,43 @@ class UsersController extends AppController
     }
 
     public function changePassword() {
+        $this->set('title', 'User change password');
         $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($id);
-        
-        if($this->request->is(['put', 'patch'])) {
+        $user = $this->apiGateWay('/api/users/profile.json', $id);
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
             $postData = $this->request->getData();
-            $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Passwords']);
-            
-            if(!$user->getErrors()) {
-                if ($this->Users->save($user)) {
-                    $datum['success'] = true;
-                }
+            $postData['id'] = $id;
+            $result = $this->apiGateWay('/api/users/changePassword.json', $postData);
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
             } else {
-                $errors = $this->formErrors($user);
-                $datum['errors'] = $errors;
+                $datum = get_object_vars($result);
             }
-            
             return $this->jsonResponse($datum);
         }
-        unset($user['password']);
         $this->set(compact('user'));
     }
     
-    public function follow($followingId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($followingId);
-        if($user) {
-            $exists = $this->Follows->find('all', [
-                                                'conditions' => [
-                                                    ['Follows.following_id' => $followingId], 
-                                                    ['Follows.user_id' => $id]
-                                                ]
-                                           ])->first();
-                                           
-            if(!$exists) {
-                $follow = $this->Follows->newEntity();
-                $follow->user_id = $id;
-                $follow->following_id = $followingId;
-                $result = $this->Follows->save($follow);
-            }
+    public function follow() {
+        $followingId = $this->request->getQuery('following_id');
+        if(!$followingId) {
+            throw new NotFoundException();
         }
-        $datum = ['success' => (isset($result)) ? true : false];
+        
+        $id = $this->request->getSession()->read('Auth.User.id');
+        $datum = $this->apiGateWay('/api/users/follow.json', ['user_id' => $id,'following_id' => $followingId]);
         return $this->jsonResponse($datum);
     }
 
-    public function unfollow($followingId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($followingId);
-        if($user) {
-            $exists = $this->Follows->find('all', [
-                                                'conditions' => [
-                                                    ['Follows.following_id' => $followingId], 
-                                                    ['Follows.user_id' => $id]
-                                                ]
-                                           ])->first();
-                                           
-            if($exists) {
-                $status = $exists->deleted ? 0 : 1;
-                $exists->deleted = $status;
-                $result = $this->Follows->save($exists);
-            }
+    public function unfollow() {
+        $followingId = $this->request->getQuery('following_id');
+        if(!$followingId) {
+            throw new NotFoundException();
         }
-        $datum = ['success' => (isset($result)) ? true : false];
+        
+        $id = $this->request->getSession()->read('Auth.User.id');
+        $datum = $this->apiGateWay('/api/users/unfollow.json', ['user_id' => $id,'following_id' => $followingId]);
         return $this->jsonResponse($datum);
     }
 }

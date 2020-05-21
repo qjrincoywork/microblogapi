@@ -63,6 +63,36 @@ class UsersController extends AppController
             $ids[] = $val['following_id'];
         }
         $ids[] = $id;
+        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
+        return $this->jsonResponse($data);
+    }
+    
+    public function profile()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+                               
+        if(is_object($request->data)) {
+            $profile = $this->Users->find('all', [
+                                            'conditions' => ['Users.id' => $request->data->id, 'Users.is_online !=' => 2]
+                                         ])->first();
+            $profile->is_following = $this->isFollowing($request->data->user_id, $profile->id);
+            $profile->had_followed = $this->hadFollowed($request->data->user_id, $profile->id);
+        } else {
+            $profile = $this->Users->find('all', [
+                'conditions' => ['Users.id' => $request->data, 'Users.is_online !=' => 2]
+             ])->first();
+        }
+        return $this->jsonResponse($profile);
+    }
+    
+    public function profilePosts()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $condition = get_object_vars($request->data->condition);
+        $id = $request->data->user_id;
+        $posts = $this->getPosts($condition);
         $posts = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
         $data = [];
         foreach ($posts as $post) {
@@ -187,26 +217,24 @@ class UsersController extends AppController
         }
     }
 
-    public function activation($token) {
-        if(!$token) {
-            throw new NotFoundException();
-            $this->Flash->error(__('Invalid token'));
-        }
-        $user = $this->Users->find('all', ['conditions' => ['Users.token' => $token]])->first();
-        
-        if(!$user) {
-            throw new NotFoundException();
-            $this->Flash->error(__('Invalid token!'));
-        }
-        
-        if(isset($user['is_online']) && $user['is_online'] == 2) {
-            $user->set(['is_online' => 0]);
-            $this->Users->save($user);
-            $this->Flash->success(__('Account successfully verified!, You can now login'));
-            $this->redirect(['controller' => 'users', 'action' => 'login']);
-        } else {
-            $this->Flash->error(__('Account was already verified!'));
-            $this->redirect(['controller' => 'users', 'action' => 'login']);
+    public function activation() {
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        if ($this->request->is('post')) {
+            $user = $this->Users->find('all', ['conditions' => ['Users.token' => $request->data]])->first();
+            
+            if(!$user) {
+                $datum['error'] = 'Invalid token!';
+            }
+            
+            if($user->is_online == 2) {
+                $user->set(['is_online' => 0]);
+                if($this->Users->save($user)) {
+                    $datum['success'] = true;
+                }
+            } else {
+                $datum['error'] = 'Account was already verified!';
+            }
+            return $this->jsonResponse($datum);
         }
     }
 
@@ -234,7 +262,13 @@ class UsersController extends AppController
                 'created' => 'desc',
             ],
         ];
-        $data = $this->paginate($this->Users);
+        $users = $this->paginate($this->Users);
+        $data = [];
+        foreach($users as $user) {
+            $user->is_following = $this->isFollowing($request->data->id, $user->id);
+            $user->had_followed = $this->hadFollowed($request->data->id, $user->id);
+            $data[] = $user;
+        }
         return $this->jsonResponse($data);
     }
     
@@ -281,9 +315,14 @@ class UsersController extends AppController
                     ],
                 ]
             ];
-            $data = $this->paginate();
+            $users = $this->paginate();
+            $data = [];
+            foreach($users as $user) {
+                $user->is_following = $this->isFollowing($postData['id'], $user->id);
+                $user->had_followed = $this->hadFollowed($postData['id'], $user->id);
+                $data[] = $user;
+            }
         }
-        
         return $this->jsonResponse($data);
     }
 
@@ -330,12 +369,12 @@ class UsersController extends AppController
     }
 
     public function changePassword() {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($id);
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        $postData = get_object_vars($request->data);
         
-        if($this->request->is(['put', 'patch'])) {
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
-            $postData = $this->request->getData();
+            $user = $this->Users->get($postData['id']);
             $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Passwords']);
             
             if(!$user->getErrors()) {
@@ -349,25 +388,23 @@ class UsersController extends AppController
             
             return $this->jsonResponse($datum);
         }
-        unset($user['password']);
-        $this->set(compact('user'));
     }
     
-    public function follow($followingId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($followingId);
+    public function follow() {
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        $user = $this->Users->get($request->data->following_id);
         if($user) {
             $exists = $this->Follows->find('all', [
                                                 'conditions' => [
-                                                    ['Follows.following_id' => $followingId], 
-                                                    ['Follows.user_id' => $id]
+                                                    ['Follows.following_id' => $request->data->following_id], 
+                                                    ['Follows.user_id' => $request->data->user_id]
                                                 ]
                                            ])->first();
                                            
             if(!$exists) {
                 $follow = $this->Follows->newEntity();
-                $follow->user_id = $id;
-                $follow->following_id = $followingId;
+                $follow->user_id = $request->data->user_id;
+                $follow->following_id = $request->data->following_id;
                 $result = $this->Follows->save($follow);
             }
         }
@@ -375,14 +412,15 @@ class UsersController extends AppController
         return $this->jsonResponse($datum);
     }
 
-    public function unfollow($followingId) {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($followingId);
+    public function unfollow() {
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        $user = $this->Users->get($request->data->following_id);
+        
         if($user) {
             $exists = $this->Follows->find('all', [
                                                 'conditions' => [
-                                                    ['Follows.following_id' => $followingId], 
-                                                    ['Follows.user_id' => $id]
+                                                    ['Follows.following_id' => $request->data->following_id], 
+                                                    ['Follows.user_id' => $request->data->user_id]
                                                 ]
                                            ])->first();
                                            
