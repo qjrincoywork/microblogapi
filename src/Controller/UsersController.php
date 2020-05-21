@@ -174,28 +174,21 @@ class UsersController extends AppController
             $column = 'user_id';
             $message = "Don't have any follower";
         }
+
+        $userColumn = $this->apiGateWay('/api/users/userCount.json', ['column' => $column, 'conditions' => $conditions]);
+        $pages = 0;
+        if($userColumn) {
+            $pages = ceil($userColumn->rows / 4);
+        }
+        $page = $this->request->getQuery('page');
         
-        $ids = $this->Follows->find('list', ['valueField' => $column])
-                             ->where($conditions)->toArray();
-                             
-        if($ids) {
-            $this->paginate = [
-                'Users' => [
-                    'conditions' => [
-                        ['Users.is_online !=' => 2],
-                        ['Users.deleted' => 0],
-                        ['Users.id IN' => $ids],
-                    ],
-                    'limit' => 4,
-                    'order' => [
-                        'Users.created' => 'desc',
-                    ],
-                ]
-            ];
-            $data = $this->paginate();
+        if($page <= $pages) {
+            $data = $this->apiGetGateWay("/api/users/following.json?page=".$page, ['column' => $column, 'conditions' => $conditions]);
+        } else {
+            $data = $this->apiGetGateWay('/api/users/following.json', ['column' => $column, 'conditions' => $conditions]);
         }
         
-        $this->set(compact('message', 'data'));
+        $this->set(compact('message', 'data', 'pages', 'field', 'id'));
     }
 
     public function editPicture() {

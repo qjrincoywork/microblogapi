@@ -217,21 +217,12 @@ class UsersController extends AppController
     }
 
     public function following() {
-        $field = key($this->request->getQuery());
-        $id = $this->request->getQuery()[$field];
-        $data = [];
-        $conditions = ['Follows.'.$field => $id,'Follows.deleted' => 0];
+        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+        $postData = get_object_vars($request->data);
+        $postData['conditions'] = get_object_vars($request->data->conditions);
         
-        if($field == 'user_id') {
-            $column = 'following_id';
-            $message = 'No user following';
-        } else {
-            $column = 'user_id';
-            $message = "Don't have any follower";
-        }
-        
-        $ids = $this->Follows->find('list', ['valueField' => $column])
-                             ->where($conditions)->toArray();
+        $ids = $this->Follows->find('list', ['valueField' => $postData['column']])
+                             ->where($postData['conditions'])->toArray();
                              
         if($ids) {
             $this->paginate = [
@@ -250,7 +241,7 @@ class UsersController extends AppController
             $data = $this->paginate();
         }
         
-        $this->set(compact('message', 'data'));
+        return $this->jsonResponse($data);
     }
 
     public function editPicture() {
@@ -258,22 +249,7 @@ class UsersController extends AppController
             $datum['success'] = false;
             $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
             $postData = get_object_vars($request->data);
-            /* if($postData['image'] == 'undefined') {
-                $postData['image'] = null;
-                $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
-            } else {
-                $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
-                $uploadFolder = "img/".$postData['id'];
-                
-                if(!file_exists($uploadFolder)) {
-                    mkdir($uploadFolder);
-                }
-                
-                $path = $uploadFolder."/".$postData['image']['name'];
-                if(copy($postData['image']['tmp_name'], $path)) {
-                    $user->image = $path;
-                }
-            } */
+            
             if($postData['image'] != 'undefined') {
                 $postData['image'] = get_object_vars($postData['image']);
             }
