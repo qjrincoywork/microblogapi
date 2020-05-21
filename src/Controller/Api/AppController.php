@@ -60,7 +60,7 @@ class AppController extends Controller
                             ])->first();
         return $data;
     }
-
+    
     public function reactionCount($postId, $reaction) {
         $model = TableRegistry::get($reaction);
         $count = $model->find('all',[

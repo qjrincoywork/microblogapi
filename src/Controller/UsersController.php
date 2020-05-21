@@ -8,6 +8,7 @@ use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
 use Cake\ORM\TableRegistry;
 use Firebase\JWT\JWT;
+use Cake\Http\Exception\NotFoundException;
 /**
  * Users Controller
  *
@@ -34,29 +35,6 @@ class UsersController extends AppController
         }
     }
 
-    public function index()
-    {
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id' => 1]);
-        $this->set(['data' => $data, '_serialize' => ['data']]);
-    }
-
-    public function getPosts($conditions) {
-        $this->paginate = [
-            'Posts' => [
-                'contain' => ['Users'],
-                'conditions' => [
-                    $conditions,
-                ],
-                'limit' => 4,
-                'order' => [
-                    'created' => 'desc',
-                ],
-            ]
-        ];
-        
-        return $this->paginate($this->Posts);
-    }
-
     public function home()
     {
         $this->set('title', 'Home');
@@ -75,90 +53,9 @@ class UsersController extends AppController
         $this->set(compact('post', 'data', 'pages'));
     }
 
-    public function login()
-    {
-        $this->set('title', 'User Login');
-        if($this->request->getSession()->read('Auth.User.id')) {
-            return $this->redirect(['action' => 'home']);
-        }
-        
-        $this->viewBuilder()->setLayout('default');
-        if($this->request->is('post')) {
-            $user = $this->Auth->identify();
-            if($user) {
-                if($user['is_online'] == 2) {
-                    $datum['error'] = 'Please activate your account first.';
-                } else {
-                    $userData = $this->Users->get($user['id']);
-                    $userData->set(['is_online' => 1]);
-                    if($this->Users->save($userData)) {
-                        $this->Auth->setUser($user);
-                        $datum['success'] = true;
-                    }
-                }
-            } else {
-                $datum['error'] = 'Invalid username or password.';
-            }
-            return $this->jsonResponse($datum);
-        }
-    }
-    
-    public function sendEmail($userName, $fullName, $to, $token) {
-        try {
-            $activationUrl = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . "/users/activation/" . $token;
-            $subject = "Microblog Account Activation";
-
-            $email = new Email('gmail');
-            $email->setFrom([$to => 'Microblog 3'])
-                    ->setEmailFormat('html')
-                    ->setTo($to)
-                    ->setSubject($subject)
-                    ->setViewVars(['name' => $fullName, 
-                                   'email' => $to,
-                                   'username' => $userName, 
-                                   'url' => $activationUrl])
-                    ->viewBuilder()
-                    ->setLayout('activation')
-                    ->setTemplate('default');
-            return $email->send();
-        } catch (\Throwable $th) {
-            echo $th;
-        }
-    }
-
     public function logout()
     {
         return $this->redirect($this->Auth->logout());
-    }
-
-    public function register()
-    {
-        if($this->request->getSession()->read('Auth.User.id')) {
-            return $this->redirect(['action' => 'home']);
-        }
-        
-        $this->viewBuilder()->setLayout('default');
-        $user = $this->Users->newEntity();
-        if ($this->request->is('post')) {
-            $datum['success'] = false;
-            $postData = $this->request->getData();
-            $mytoken = Security::hash(Security::randomBytes(32));
-            $postData['token'] = $mytoken;
-            $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Register']);
-            
-            if(!$user->getErrors()) {
-                if ($this->Users->save($user)) {
-                    $fullName = $user->last_name.', '.$user->first_name.' '.$user->middle_name;
-                    $userName = $user->username;
-                    $to = $user->email;
-                    if($this->sendEmail($userName, $fullName, $to, $mytoken)) {
-                        $this->Flash->success(__('Email has been sent to activate your account.'));
-                        return $this->redirect(['action' => 'register']);
-                    }
-                }
-            }
-        }
-        $this->set('user', $user);
     }
 
     public function activation($token) {
@@ -184,33 +81,39 @@ class UsersController extends AppController
         }
     }
     
-    public function profile($id)
+    public function profile()
     {
-        $conditions = [];
-        if(!$id) {
+        $this->set('title', 'User Profile');
+        if(!$this->request->getQuery('id')) {
             throw new NotFoundException();
         }
-        $myId = $this->request->getSession()->read('Auth.User.id');
         
-        if($myId != $id) {
-            $conditions = ['Posts.user_id' => $id, 'Posts.deleted' => 0];
-        } else {
-            $conditions = ['Posts.user_id' => $id];
-        }
-        
-        $profile = $this->Users->find('all', [
-                                        'conditions' => ['Users.id' => $id, 'Users.is_online !=' => 2]
-                                     ])->first();
-
+        $id = $this->request->getQuery('id');
+        $profile = $this->apiGateWay('/api/users/profile.json', $id);
         if(!$profile) {
             throw new NotFoundException();
         }
         
-        $data = $this->getPosts($conditions);
+        $myId = $this->request->getSession()->read('Auth.User.id');
+        if($myId != $id) {
+            $condition = ['Posts.user_id' => $id, 'Posts.deleted' => 0];
+        } else {
+            $condition = ['Posts.user_id' => $id];
+        }
         
-        $this->set(compact('data', 'profile'));
-    }
+        $postColumn = $this->apiGateWay('/api/users/postCount.json', ['user_id' => $id]);
+        $pages = ceil($postColumn->rows / 4);
+        $page = $this->request->getQuery('page');
+        
+        if($page <= $pages) {
+            $data = $this->apiGetGateWay("/api/users/profilePosts.json?page=".$page, ['user_id' => $myId, 'condition' => $condition]);
+        } else {
+            $data = $this->apiGetGateWay('/api/users/profilePosts.json', ['user_id' => $myId, 'condition' => $condition]);
+        }
 
+        $this->set(compact('data', 'profile', 'pages'));
+    }
+    
     public function search($user) {
         $conditions = [];
         if($user){

@@ -166,33 +166,6 @@ class UsersController extends AppController
             $this->redirect(['controller' => 'users', 'action' => 'login']);
         }
     }
-    
-    public function profile($id)
-    {
-        $conditions = [];
-        if(!$id) {
-            throw new NotFoundException();
-        }
-        $myId = $this->request->getSession()->read('Auth.User.id');
-        
-        if($myId != $id) {
-            $conditions = ['Posts.user_id' => $id, 'Posts.deleted' => 0];
-        } else {
-            $conditions = ['Posts.user_id' => $id];
-        }
-        
-        $profile = $this->Users->find('all', [
-                                        'conditions' => ['Users.id' => $id, 'Users.is_online !=' => 2]
-                                     ])->first();
-
-        if(!$profile) {
-            throw new NotFoundException();
-        }
-        
-        $data = $this->getPosts($conditions);
-        
-        $this->set(compact('data', 'profile'));
-    }
 
     public function search($user) {
         $conditions = [];
