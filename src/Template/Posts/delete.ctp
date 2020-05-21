@@ -10,6 +10,7 @@
     echo $this->Form->control('id', array(
                             'label' => false,
                             'type' => 'hidden',
+                            'value' => $post->id,
                             'id' => 'id'
     ));
 

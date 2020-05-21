@@ -112,29 +112,28 @@ class PostsController extends AppController
 
     public function delete($id)
     {
-        $post = $this->Posts->get($id);
-        if($this->request->is(['put', 'patch'])) {
+        $post = $this->apiGateWay('/api/posts/userPost.json', $id);
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
-            $postData = $this->request->getData();
             $userId = $this->request->getSession()->read('Auth.User.id');
-            $post = $this->Posts->patchEntity($post, $postData);
-            $post->user_id = $userId;
+            if($post->user_id != $userId) {
+                $datum['error'] = 'Unable to process action.';
+                return $this->jsonResponse($datum);
+            }
+
+            $postData = $this->request->getData();
+            $postData['user_id'] = $userId;
+            $result = $this->apiGateWay('/api/posts/delete.json', $postData);
             
-            if($post->getErrors()) {
-                if(array_key_exists('id', $post->getErrors())) {
-                    $datum['error'] = $post->getError('id.isMine');
-                } else {
-                    $errors = $this->formErrors($post);
-                    $datum['errors'] = $errors;
-                }
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
             } else {
-                if ($this->Posts->save($post)) {
-                    $datum['success'] = true;
-                }
+                $datum = get_object_vars($result);
             }
             
             return $this->jsonResponse($datum);
         }
+        
         $this->set(compact('post'));
     }
 }
