@@ -254,29 +254,48 @@ class UsersController extends AppController
     }
 
     public function editPicture() {
-        $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($id);
-        if($this->request->is(['put', 'patch'])) {
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
-            $postData = $this->request->getData();
-            
-            if($postData['image'] == 'undefined') {
+            $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
+            $postData = get_object_vars($request->data);
+            /* if($postData['image'] == 'undefined') {
                 $postData['image'] = null;
                 $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
             } else {
                 $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
-                $uploadFolder = "img/".$id;
+                $uploadFolder = "img/".$postData['id'];
                 
                 if(!file_exists($uploadFolder)) {
                     mkdir($uploadFolder);
                 }
                 
                 $path = $uploadFolder."/".$postData['image']['name'];
-                if(move_uploaded_file($postData['image']['tmp_name'], $path)) {
+                if(copy($postData['image']['tmp_name'], $path)) {
+                    $user->image = $path;
+                }
+            } */
+            if($postData['image'] != 'undefined') {
+                $postData['image'] = get_object_vars($postData['image']);
+            }
+            $user = $this->Users->get($postData['id']);
+            
+            if($postData['image'] == 'undefined') {
+                $postData['image'] = null;
+                $user = $this->Users->patchEntity($user, $postData);
+            } else {
+                $user = $this->Users->patchEntity($user, $postData);
+                $uploadFolder = "img/".$postData['id'];
+                
+                if(!file_exists($uploadFolder)) {
+                    mkdir($uploadFolder);
+                }
+
+                $path = $uploadFolder."/".$postData['image']['name'];
+                
+                if(copy($postData['image']['tmp_name'], $path)) {
                     $user->image = $path;
                 }
             }
-            $user->user_id = $id;
             
             if(!$user->getErrors()) {
                 if ($this->Users->save($user)) {
@@ -289,7 +308,6 @@ class UsersController extends AppController
             
             return $this->jsonResponse($datum);
         }
-        $this->set(compact('user'));
     }
 
     public function changePassword() {

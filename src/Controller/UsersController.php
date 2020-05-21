@@ -200,12 +200,21 @@ class UsersController extends AppController
 
     public function editPicture() {
         $id = $this->request->getSession()->read('Auth.User.id');
-        $user = $this->Users->get($id);
-        if($this->request->is(['put', 'patch'])) {
+        $user = $this->apiGateWay('/api/users/profile.json', $id);
+        if($this->request->is(['post'])) {
             $datum['success'] = false;
             $postData = $this->request->getData();
+            $postData['id'] = $id;
+            $result = $this->apiGateWay('/api/users/editPicture.json', $postData);
             
-            if($postData['image'] == 'undefined') {
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
+            } else {
+                pr($result); die('view');
+                $datum = get_object_vars($result);
+            }
+            return $this->jsonResponse($datum);
+            /* if($postData['image'] == 'undefined') {
                 $postData['image'] = null;
                 $user = $this->Users->patchEntity($user, $postData, ['validate' => 'Update']);
             } else {
@@ -232,7 +241,7 @@ class UsersController extends AppController
                 $datum['errors'] = $errors;
             }
             
-            return $this->jsonResponse($datum);
+            return $this->jsonResponse($datum); */
         }
         $this->set(compact('user'));
     }
