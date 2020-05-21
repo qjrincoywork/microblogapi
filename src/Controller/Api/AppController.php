@@ -122,25 +122,4 @@ class AppController extends Controller
         $hadFollowed = (!empty($data)) ? true : false;
         return $hadFollowed;
     }
-    
-    public function postCount()
-    {
-        $request = JWT::decode($this->request->getData('token'), 
-                               $this->request->getData('api_key'), ['HS256']);
-        $id = $request->data->user_id;
-        $following = $this->Follows->find()
-                                   ->select('Follows.following_id')
-                                   ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
-                                   ->toArray();
-        $ids = [];
-        foreach($following as $key => $val) {
-            $ids[] = $val['following_id'];
-        }
-        $ids[] = $id;
-        $data = $this->Posts->find('all')
-                            ->select()
-                            ->where(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids])
-                            ->count();
-        return $this->jsonResponse(['rows' => $data]);
-    }
 }

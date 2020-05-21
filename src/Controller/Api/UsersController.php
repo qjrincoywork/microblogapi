@@ -89,6 +89,58 @@ class UsersController extends AppController
         }
         return $this->jsonResponse($data);
     }
+    
+    public function profile()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+                               
+        if(is_object($request->data)) {
+            $profile = $this->Users->find('all', [
+                                            'conditions' => ['Users.id' => $request->data->id, 'Users.is_online !=' => 2]
+                                         ])->first();
+            $profile->is_following = $this->isFollowing($request->data->user_id, $profile->id);
+            $profile->had_followed = $this->hadFollowed($request->data->user_id, $profile->id);
+        } else {
+            $profile = $this->Users->find('all', [
+                'conditions' => ['Users.id' => $request->data, 'Users.is_online !=' => 2]
+             ])->first();
+        }
+        return $this->jsonResponse($profile);
+    }
+    
+    public function profilePosts()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        $condition = get_object_vars($request->data->condition);
+        $id = $request->data->user_id;
+        $posts = $this->getPosts($condition);
+        $data = [];
+        foreach ($posts as $post) {
+            $likedBefore = $this->likedBefore($post->id, $id);
+            $sharedPost = $this->getSharedPost($post->post_id);
+            $isLiked = $this->postReaction($post->id, $id, 'Likes');
+            $isCommented = $this->postReaction($post->id, $id, 'Comments');
+            $isShared = $this->postReaction($post->id, $id, 'Posts');
+            
+            $likeCount = $this->reactionCount($post->id, 'Likes');
+            $commentCount = $this->reactionCount($post->id, 'Comments');
+            $shareCount = $this->reactionCount($post->id, 'Posts');
+            
+            $post->shared_post = $sharedPost;
+            $post->liked_before = $likedBefore;
+            $post->is_liked = $isLiked;
+            $post->is_commented = $isCommented;
+            $post->is_shared = $isShared;
+
+            $post->like_count = $likeCount;
+            $post->comment_count = $commentCount;
+            $post->share_count = $shareCount;
+            $data[] = $post;
+        }
+        return $this->jsonResponse($data);
+    }
 
     public function searchCount()
     {
@@ -127,6 +179,34 @@ class UsersController extends AppController
                                 ->count();
         }
         
+        return $this->jsonResponse(['rows' => $data]);
+    }
+    
+    public function postCount()
+    {
+        $request = JWT::decode($this->request->getData('token'), 
+                               $this->request->getData('api_key'), ['HS256']);
+        if(isset($request->data->id)) {
+            $id = $request->data->id;
+            $following = $this->Follows->find()
+                                       ->select('Follows.following_id')
+                                       ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
+                                       ->toArray();
+            $ids = [];
+            foreach($following as $key => $val) {
+                $ids[] = $val['following_id'];
+            }
+            $ids[] = $id;
+            $data = $this->Posts->find('all')
+                                ->select()
+                                ->where(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids])
+                                ->count();
+        } else {
+            $data = $this->Posts->find('all')
+                                ->select()
+                                ->where(['Posts.deleted' => 0, 'Posts.user_id' => $request->data->user_id])
+                                ->count();
+        }
         return $this->jsonResponse(['rows' => $data]);
     }
 

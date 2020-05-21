@@ -30,11 +30,9 @@
                                         <button href='".$this->Url->build(['controller' => 'users', 'action' => 'edit'])."' type='button' class='edit_profile btn-sm btn-outline-primary'>Edit profile</button>
                                 </div>";
                     } else {
-                        $isFollowing = $this->System->isFollowing($id, $userId);
-                        $hadFollowed = $this->System->hadFollowed($id, $userId);
                         $hrefAction = $profile->had_followed ? 'unfollow' : 'follow';
-                        $btnTitle = $isFollowing ? 'Unfollow' : 'Follow';
-                        $btnClass = $isFollowing ? 'unfollow_user btn-outline-danger' : 'follow_user btn-outline-primary';
+                        $btnTitle = $profile->is_following ? 'Unfollow' : 'Follow';
+                        $btnClass = $profile->is_following ? 'unfollow_user btn-outline-danger' : 'follow_user btn-outline-primary';
                         
                         $button = "<div class='follow-button col-sm-12 mt-3'>
                                         <button href='".$this->Url->build(['controller' => 'users', 'action' => $hrefAction, 'following_id' => $userId])."' type='button' class='".$btnClass." btn-sm'>".$btnTitle."</button>
