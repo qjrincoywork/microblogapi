@@ -3,7 +3,6 @@ namespace App\Controller\Api;
 
 use Cake\Event\Event;
 use Cake\Utility\Security;
-use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
 use Cake\ORM\TableRegistry;
 use Firebase\JWT\JWT;
@@ -26,11 +25,6 @@ class UsersController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->viewBuilder()->setLayout('main');
-        
-        if($this->request->is('ajax')) {
-            $this->viewBuilder()->setLayout(false);
-        }
     }
     
     public function getPosts($conditions) {
@@ -69,29 +63,31 @@ class UsersController extends AppController
             $ids[] = $val['following_id'];
         }
         $ids[] = $id;
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
-        return $this->jsonResponse($data);
-    }
+        $posts = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
+        $data = [];
+        foreach ($posts as $post) {
+            $likedBefore = $this->likedBefore($post->id, $id);
+            $sharedPost = $this->getSharedPost($post->post_id);
+            $isLiked = $this->postReaction($post->id, $id, 'Likes');
+            $isCommented = $this->postReaction($post->id, $id, 'Comments');
+            $isShared = $this->postReaction($post->id, $id, 'Posts');
+            
+            $likeCount = $this->reactionCount($post->id, 'Likes');
+            $commentCount = $this->reactionCount($post->id, 'Comments');
+            $shareCount = $this->reactionCount($post->id, 'Posts');
+            
+            $post->shared_post = $sharedPost;
+            $post->liked_before = $likedBefore;
+            $post->is_liked = $isLiked;
+            $post->is_commented = $isCommented;
+            $post->is_shared = $isShared;
 
-    public function postCount()
-    {
-        $request = JWT::decode($this->request->getData('token'), 
-                               $this->request->getData('api_key'), ['HS256']);
-        $id = $request->data->user_id;
-        $following = $this->Follows->find()
-                                   ->select('Follows.following_id')
-                                   ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
-                                   ->toArray();
-        $ids = [];
-        foreach($following as $key => $val) {
-            $ids[] = $val['following_id'];
+            $post->like_count = $likeCount;
+            $post->comment_count = $commentCount;
+            $post->share_count = $shareCount;
+            $data[] = $post;
         }
-        $ids[] = $id;
-        $data = $this->Posts->find('all')
-                            ->select()
-                            ->where(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids])
-                            ->count();
-        return $this->jsonResponse(['rows' => $data]);
+        return $this->jsonResponse($data);
     }
 
     public function login()
@@ -113,29 +109,6 @@ class UsersController extends AppController
             }
             
             return $this->jsonResponse($datum);
-        }
-    }
-    
-    public function sendEmail($userName, $fullName, $to, $token) {
-        try {
-            $activationUrl = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . "/users/activation/" . $token;
-            $subject = "Microblog Account Activation";
-
-            $email = new Email('gmail');
-            $email->setFrom([$to => 'Microblog 3'])
-                    ->setEmailFormat('html')
-                    ->setTo($to)
-                    ->setSubject($subject)
-                    ->setViewVars(['name' => $fullName, 
-                                   'email' => $to,
-                                   'username' => $userName, 
-                                   'url' => $activationUrl])
-                    ->viewBuilder()
-                    ->setLayout('activation')
-                    ->setTemplate('default');
-            return $email->send();
-        } catch (\Throwable $th) {
-            echo $th;
         }
     }
 
