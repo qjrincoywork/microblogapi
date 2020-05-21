@@ -53,35 +53,15 @@ class PostsController extends AppController
         $datum['success'] = false;
         if ($this->request->is('post')) {
             $id = $this->request->getSession()->read('Auth.User.id');
+            $postData = $this->request->getData();
+            $postData['user_id'] = $id;
+            $result = $this->apiGateWay('/api/posts/add.json', $postData);
             
-            $post = $this->Posts->patchEntity($post, $this->request->getData());
-            $post->user_id = $id;
-            if($this->request->getData()['image'] == 'undefined') {
-                $post->image = null;
+            if(isset($result->success) && $result->success) {
+                $datum['success'] = $result->success;
             } else {
-                $uploadFolder = "img/".$id;
-                
-                if(!file_exists($uploadFolder)) {
-                    mkdir($uploadFolder);
-                }
-
-                $path = $uploadFolder."/".$this->request->getData()['image']['name'];
-                
-                if(move_uploaded_file($this->request->getData()['image']['tmp_name'], $path)) {
-                    $this->request->getData()['image'] = $path;
-                }
-                $post->image = $path;
+                $datum = get_object_vars($result);
             }
-            
-            if(!$post->getErrors()) {
-                if ($this->Posts->save($post)) {
-                    $datum['success'] = true;
-                }
-            } else {
-                $errors = $this->formErrors($post);
-                $datum['errors'] = $errors;
-            }
-            
             return $this->jsonResponse($datum);
         }
     }

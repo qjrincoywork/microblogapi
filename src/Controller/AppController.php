@@ -157,19 +157,17 @@ class AppController extends Controller
             $token = JWT::encode($payload, $key);
             $jsonData = json_encode(['token' => $token, 'api_key' => $key]);
             
-            $header = array('Content-Type:application/json');
             curl_setopt($ch, CURLOPT_URL, $fullUrl);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
             curl_setopt($ch, CURLOPT_HEADER, true);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($ch);
-            // pr($result); die('app');
             $data = json_decode(strstr($result, '{'));
             curl_close($ch);
             
-            return $data;
+        return $data;
         } catch (Exception $e) {
             dd('error');
         }

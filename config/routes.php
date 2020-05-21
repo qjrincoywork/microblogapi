@@ -123,7 +123,8 @@ Router::scope('/', function (RouteBuilder $routes) {
 });
 Router::prefix('api', function (RouteBuilder $routes) {
     $routes->setExtensions(['json']);
-    $routes->post('/users/login', ['controller' => 'Users', 'action' => 'login']);
-    $routes->post('/users/register', ['controller' => 'Users', 'action' => 'register']);
+    // $routes->post('/posts/add', ['controller' => 'Posts', 'action' => 'add']);
+    // $routes->post('/users/login', ['controller' => 'Users', 'action' => 'login']);
+    // $routes->post('/users/register', ['controller' => 'Users', 'action' => 'register']);
     $routes->fallbacks('InflectedRoute');
 });

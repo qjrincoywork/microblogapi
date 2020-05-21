@@ -442,3 +442,16 @@ Stack Trace:
 #17 {main}
 
 
+2020-05-13 16:15:31 Error: [Error] Class 'Api\PostsController' not found in C:\wamp64\www\microblogapi\vendor\cakephp\cakephp\src\ORM\Locator\TableLocator.php on line 293
+Stack Trace:
+#0 C:\wamp64\www\microblogapi\vendor\cakephp\cakephp\src\ORM\Locator\TableLocator.php(249): Cake\ORM\Locator\TableLocator->_create(Array)
+#1 C:\wamp64\www\microblogapi\vendor\cakephp\bake\src\Shell\Task\ControllerTask.php(128): Cake\ORM\Locator\TableLocator->get('Api\\PostsContro...', Array)
+#2 C:\wamp64\www\microblogapi\vendor\cakephp\bake\src\Shell\Task\ControllerTask.php(69): Bake\Shell\Task\ControllerTask->bake('Api\\PostsContro...')
+#3 C:\wamp64\www\microblogapi\vendor\cakephp\cakephp\src\Console\Shell.php(531): Bake\Shell\Task\ControllerTask->main('Api\\PostsContro...')
+#4 C:\wamp64\www\microblogapi\vendor\cakephp\cakephp\src\Console\Shell.php(524): Cake\Console\Shell->runCommand(Array, false, Array)
+#5 C:\wamp64\www\microblogapi\vendor\cakephp\cakephp\src\Console\CommandRunner.php(385): Cake\Console\Shell->runCommand(Array, true)
+#6 C:\wamp64\www\microblogapi\vendor\cakephp\cakephp\src\Console\CommandRunner.php(162): Cake\Console\CommandRunner->runShell(Object(Bake\Shell\BakeShell), Array)
+#7 C:\wamp64\www\microblogapi\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#8 {main}
+
+

@@ -10,7 +10,7 @@
             ];
             $this->Form->setTemplates($myTemplates);
         ?>
-        <?= $this->Form->create('Post', ['id' => 'AddPost', 'url' => ['controller' => 'posts', 'action' => 'add']]); ?>
+        <?= $this->Form->create('Post', ['id' => 'AddPost', 'url' => ['controller' => 'posts', 'action' => 'add'], 'type' => 'file']); ?>
         <?php
             echo $this->Form->control('content', [
                                     'label' => false,
