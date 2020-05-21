@@ -40,7 +40,7 @@
                     </button>
                 </div>
                 <?php endif;?>
-                <div class="post-user"><a href='<?=$this->Url->build(['controller' => 'users', 'action' => 'profile', $data->user_id])?>'>
+                <div class="post-user"><a href='<?=$this->Url->build(['controller' => 'users', 'action' => 'profile', 'id' => $data->user_id])?>'>
                     <?=$fullName?>
                 </a></div>
                 <div class="post-ago">
@@ -74,7 +74,7 @@
     
                         $sharePost .= "<div class='post-details col-sm-10'>
                                             <div class='row'>
-                                                <div class='post-user'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', 'user_id' => $sharedPost->user->id])."'>"
+                                                <div class='post-user'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', 'id' => $sharedPost->user->id])."'>"
                                                     .$sharedFullName.
                                                 "</a></div>
                                                 <div class='post-ago'>
@@ -150,7 +150,7 @@
                                 </div>";
             $userProfile .= "   <div class='row p-2 col-sm-11'>";
             $userProfile .= $commentButtons;
-            $userProfile .= "       <div class='post-user'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', $val->user_id])."'>
+            $userProfile .= "       <div class='post-user'><a href='".$this->Url->build(['controller' => 'users', 'action' => 'profile', 'id' => $val->user_id])."'>
                                     $commenter
                                     </a></div>
                                     <div class='post-ago'>
