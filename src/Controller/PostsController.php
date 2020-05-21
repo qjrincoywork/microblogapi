@@ -87,8 +87,14 @@ class PostsController extends AppController
     
     public function edit($id)
     {
+        $post = $this->apiGateWay('/api/posts/userPost.json', $id);
         if ($this->request->is(['post'])) {
             $userId = $this->request->getSession()->read('Auth.User.id');
+            if($post->user_id != $userId) {
+                $datum['error'] = 'Unable to process action.';
+                return $this->jsonResponse($datum);
+            }
+            
             $postData = $this->request->getData();
             $postData['user_id'] = $userId;
             $result = $this->apiGateWay('/api/posts/edit.json', $postData);
@@ -101,7 +107,6 @@ class PostsController extends AppController
             
             return $this->jsonResponse($datum);
         }
-        $post = $this->apiGateWay('/api/posts/userPost.json', $id);
         $this->set(compact('post'));
     }
 

@@ -3,7 +3,6 @@ namespace App\Controller\Api;
 
 use Cake\Event\Event;
 use Cake\Utility\Security;
-use Cake\Mailer\Email;
 use Cake\Mailer\TransportFactory;
 use Cake\ORM\TableRegistry;
 use Firebase\JWT\JWT;
@@ -26,11 +25,6 @@ class UsersController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->viewBuilder()->setLayout('main');
-        
-        if($this->request->is('ajax')) {
-            $this->viewBuilder()->setLayout(false);
-        }
     }
     
     public function getPosts($conditions) {
@@ -69,27 +63,7 @@ class UsersController extends AppController
             $ids[] = $val['following_id'];
         }
         $ids[] = $id;
-        $data = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
-        return $this->jsonResponse($data);
-    }
-    
-    public function profile()
-    {
-        $request = JWT::decode($this->request->getData('token'), 
-                               $this->request->getData('api_key'), ['HS256']);
-        $profile = $this->Users->find('all', [
-                                        'conditions' => ['Users.id' => $request->data, 'Users.is_online !=' => 2]
-                                     ])->first();
-        return $this->jsonResponse($profile);
-    }
-    
-    public function profilePosts()
-    {
-        $request = JWT::decode($this->request->getData('token'), 
-                               $this->request->getData('api_key'), ['HS256']);
-        $condition = get_object_vars($request->data->condition);
-        $id = $request->data->user_id;
-        $posts = $this->getPosts($condition);
+        $posts = $this->getPosts(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids]);
         $data = [];
         foreach ($posts as $post) {
             $likedBefore = $this->likedBefore($post->id, $id);
@@ -116,67 +90,6 @@ class UsersController extends AppController
         return $this->jsonResponse($data);
     }
 
-    public function postCount()
-    {
-        $request = JWT::decode($this->request->getData('token'), 
-                               $this->request->getData('api_key'), ['HS256']);
-        $id = $request->data->user_id;
-        $following = $this->Follows->find()
-                                   ->select('Follows.following_id')
-                                   ->where(['Follows.user_id' => $id, 'Follows.deleted' => 0])
-                                   ->toArray();
-        $ids = [];
-        foreach($following as $key => $val) {
-            $ids[] = $val['following_id'];
-        }
-        $ids[] = $id;
-        $data = $this->Posts->find('all')
-                            ->select()
-                            ->where(['Posts.deleted' => 0, 'Posts.user_id IN' => $ids])
-                            ->count();
-        return $this->jsonResponse(['rows' => $data]);
-    }
-
-    public function searchCount()
-    {
-        $request = JWT::decode($this->request->getData('token'), 
-                               $this->request->getData('api_key'), ['HS256']);
-        $conditions = [];
-        if($request->data->user){
-            $cond = [];
-            $cond['first_name LIKE'] = "%" . trim($request->data->user) . "%";
-            $cond['last_name LIKE'] = "%" . trim($request->data->user) . "%";
-            $cond['email LIKE'] = "%" . trim($request->data->user) . "%";
-            $cond['middle_name LIKE'] = "%" . trim($request->data->user) . "%";
-            $cond['suffix LIKE'] = "%" . trim($request->data->user) . "%";
-            $cond["CONCAT(first_name,' ',last_name) LIKE"] = "%" . trim($request->data->user) . "%";
-            $conditions['OR'] = $cond;
-        }
-        $data = $this->Users->find('all')
-                            ->select()
-                            ->where(['Users.is_online !=' => 2, 'Users.deleted' => 0, $conditions])
-                            ->count();
-        return $this->jsonResponse(['rows' => $data]);
-    }
-
-    public function userCount()
-    {
-        $request = JWT::decode($this->request->getData('token'), $this->request->getData('api_key'), ['HS256']);
-        $postData = get_object_vars($request->data);
-        $postData['conditions'] = get_object_vars($request->data->conditions);
-        
-        $ids = $this->Follows->find('list', ['valueField' => $postData['column']])
-                             ->where($postData['conditions'])->toArray();
-        if($ids) {
-            $data = $this->Users->find('all')
-                                ->select()
-                                ->where(['Users.is_online !=' => 2, 'Users.deleted' => 0,'Users.id IN' => $ids])
-                                ->count();
-        }
-        
-        return $this->jsonResponse(['rows' => $data]);
-    }
-
     public function login()
     {
         if($this->request->is('post')) {
@@ -196,29 +109,6 @@ class UsersController extends AppController
             }
             
             return $this->jsonResponse($datum);
-        }
-    }
-    
-    public function sendEmail($userName, $fullName, $to, $token) {
-        try {
-            $activationUrl = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . "/users/activation/" . $token;
-            $subject = "Microblog Account Activation";
-
-            $email = new Email('gmail');
-            $email->setFrom([$to => 'Microblog 3'])
-                    ->setEmailFormat('html')
-                    ->setTo($to)
-                    ->setSubject($subject)
-                    ->setViewVars(['name' => $fullName, 
-                                   'email' => $to,
-                                   'username' => $userName, 
-                                   'url' => $activationUrl])
-                    ->viewBuilder()
-                    ->setLayout('activation')
-                    ->setTemplate('default');
-            return $email->send();
-        } catch (\Throwable $th) {
-            echo $th;
         }
     }
 
