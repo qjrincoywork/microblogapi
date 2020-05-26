@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,8 +18,8 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
-use Firebase\JWT\JWT;
 use Cake\Utility\Security;
+use Firebase\JWT\JWT;
 
 /**
  * Application Controller
@@ -29,7 +31,6 @@ use Cake\Utility\Security;
  */
 class AppController extends Controller
 {
-
     /**
      * Initialization hook method.
      *
@@ -46,7 +47,6 @@ class AppController extends Controller
             'enableBeforeRedirect' => false,
         ]);
         $this->loadComponent('Flash');
-        // $this->loadComponent('Session');
         $this->loadComponent('Paginator');
         $this->loadComponent('Auth', [
             'loginAction' => ['controller' => 'index', 'action' => 'index'],
@@ -55,108 +55,98 @@ class AppController extends Controller
                 'Form' => [
                     'fields' => [
                         'username' => 'username',
-                        'password' => 'password'
-                    ]
-                ]
+                        'password' => 'password',
+                    ],
+                ],
             ],
             'storage' => 'Session',
-            'unauthorizedRedirect' => false
+            'unauthorizedRedirect' => false,
         ]);
-        // $this->loadComponent('Csrf');
-        /*
-         * Enable the following component for recommended CakePHP security settings.
-         * see https://book.cakephp.org/3.0/en/controllers/components/security.html
-         */
-        // $this->loadComponent('Security');
     }
 
-    public function beforeFilter(Event $event) {
+    /**
+     * beforeFilter allows methods when no session
+     *
+     * @param array ...$event Event.
+     * @return void
+     */
+    public function beforeFilter(Event $event)
+    {
         $this->Auth->allow(['index', 'register', 'activation', 'logout', 'testEmail']);
     }
 
-    public function beforeRender(Event $event) {
+    /**
+     * beforeRender get the Auth user id and system logo.
+     *
+     * @param array ...$event Event.
+     * @return void
+     */
+    public function beforeRender(Event $event)
+    {
         $auth = $this->request->getSession()->read('Auth.User');
         $myId = $this->request->getSession()->read('Auth.User.id');
         $systemLogo = "/img/microbloglogo.png";
-        
         $this->set(compact('auth', 'myId', 'systemLogo'));
     }
 
-    public function formErrors($data) {
+    /**
+     * formErrors returns errors to form.
+     *
+     * @param array ...$data Data.
+     * @return array
+     */
+    public function formErrors($data)
+    {
         $errors = [];
-        foreach($data->getErrors() as $key => $val) {
+        foreach ($data->getErrors() as $key => $val) {
             $errors[$key] = array_values($val);
         }
+
         return $errors;
     }
 
-    public function jsonResponse($data){
+    /**
+     * jsonResponse returns Json Decoded data.
+     *
+     * @param array ...$data Data.
+     * @return array
+     */
+    public function jsonResponse($data)
+    {
         $jsonData = json_encode($data);
         $response = $this->response->withType('json')->withStringBody($jsonData);
+
         return $response;
     }
-    
-    public function apiPostGateWay($url, $data)
-    {
-        $output = array();
-        try {
-            $ch = curl_init();
-            $host = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-            $fullUrl = $host.$url;
-            $key = JWT::encode([
-                        'exp' => time() + 604800,
-                        'data' => $data,
-                    ], Security::salt());
 
-            $payload = array(
-                "iss" => $host,
-                "iat" => time(),
-                'exp' => time() + 604800,
-                "data" => $data
-            );
-            
-            $token = JWT::encode($payload, $key);
-            $jsonData = json_encode(['token' => $token, 'api_key' => $key]);
-            
-            $header = array('Content-Type:application/json');
-            curl_setopt($ch, CURLOPT_URL, $fullUrl);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-            curl_setopt($ch, CURLOPT_HEADER, true);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-            $result = curl_exec($ch);
-            $data = json_decode(strstr($result, '{'));
-            curl_close($ch);
-            
-            return $data;
-        } catch (Exception $e) {
-            dd('error');
-        }
-    }
-    
+    /**
+     * apiGateWay returns Json Encoded data.
+     *
+     * @param string ...$url Url of the API.
+     * @param array ...$data Data.
+     * @return array
+     */
     public function apiGateWay($url, $data)
     {
-        $output = array();
         try {
             $ch = curl_init();
             $host = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-            $fullUrl = $host.$url;
+            $fullUrl = $host . $url;
             $key = JWT::encode([
                         'exp' => time() + 604800,
                         'data' => $data,
                     ], Security::salt());
-                    
-            $payload = array(
+
+            $payload = [
                 "iss" => $host,
                 "iat" => time(),
                 'exp' => time() + 604800,
-                "data" => $data
-            );
-            
+                "data" => $data,
+            ];
+
             $token = JWT::encode($payload, $key);
             $jsonData = json_encode(['token' => $token, 'api_key' => $key]);
-            
+
             curl_setopt($ch, CURLOPT_URL, $fullUrl);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
@@ -166,47 +156,50 @@ class AppController extends Controller
             $result = curl_exec($ch);
             $data = json_decode(strstr($result, '{'));
             curl_close($ch);
-            
-        return $data;
+
+            return $data;
         } catch (Exception $e) {
             dd('error');
         }
     }
-    
+
+    /**
+     * apiGetGateWay returns Json Encoded data.
+     *
+     * @param string ...$url Url of the API.
+     * @param array ...$data Data.
+     * @return array
+     */
     public function apiGetGateWay($url, $data)
     {
-        $output = array();
         try {
             $ch = curl_init();
             $host = (isset($_SERVER['HTTPS']) === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-            $fullUrl = $host.$url;
+            $fullUrl = $host . $url;
             $key = JWT::encode([
                         'exp' => time() + 604800,
                         'data' => $data,
                     ], Security::salt());
-                    
-            $payload = array(
+
+            $payload = [
                 "iss" => $host,
                 "iat" => time(),
                 'exp' => time() + 604800,
-                "data" => $data
-            );
-            
+                "data" => $data,
+            ];
+
             $token = JWT::encode($payload, $key);
             $jsonData = json_encode(['token' => $token, 'api_key' => $key]);
-            
-            $header = array('Content-Type:application/json');
             curl_setopt($ch, CURLOPT_URL, $fullUrl);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
             curl_setopt($ch, CURLOPT_HEADER, true);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($ch);
-            // pr($result); die('app');
             $data = json_decode(strstr($result, '[{'));
             curl_close($ch);
-            
+
             return $data;
         } catch (Exception $e) {
             dd('error');
